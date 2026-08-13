@@ -1,0 +1,6 @@
+{
+  "name": "Klang Valley Homes",
+  "description": "Property platform discovering suitable homes and projects across Klang Valley connected to Google Apps Script API.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
