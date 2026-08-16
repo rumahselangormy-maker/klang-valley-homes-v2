@@ -273,7 +273,7 @@ const [lightboxIndex, setLightboxIndex] = useState(0);
         </div>
 
       </div>
-    </div>
+   
     {lightboxOpen && allImages.length > 0 && (
   <div
     className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4"
@@ -332,5 +332,6 @@ const [lightboxIndex, setLightboxIndex] = useState(0);
     </div>
   </div>
 )}
-  );
-};
+ </div>
+ );
+ };
