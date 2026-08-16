@@ -24,6 +24,21 @@ export default function App() {
 
   // Selected project modal state
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const createPropertySlug = (project: Project) =>
+  project.PROJECT_NAME
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const openProperty = (project: Project) => {
+  setSelectedProject(project);
+  window.history.pushState(
+    {},
+    '',
+    `/property/${createPropertySlug(project)}`
+  );
+};
 
   // Eligibility Modal state
   const [isEligibilityOpen, setIsEligibilityOpen] = useState<boolean>(false);
@@ -48,6 +63,22 @@ export default function App() {
     try {
       const data = await fetchProjects();
       setProjects(data);
+
+const pathname = window.location.pathname;
+
+if (pathname.startsWith('/property/')) {
+  const slug = pathname
+    .replace('/property/', '')
+    .replace(/\/$/, '');
+
+  const matchedProject = data.find(
+    (project) => createPropertySlug(project) === slug
+  );
+
+  if (matchedProject) {
+    setSelectedProject(matchedProject);
+  }
+}
     } catch (err: any) {
       console.error('Failed to load projects:', err);
       setFetchError('Tidak dapat memuatkan senarai hartanah. Sila cuba sebentar lagi.');
@@ -270,7 +301,7 @@ export default function App() {
                       <PropertyCard
                         key={project.ID || project.PROJECT_NAME}
                         project={project}
-                        onViewDetails={setSelectedProject}
+                        onViewDetails={openProperty}
                         onEnquire={handleOpenEligibility}
                       />
                     ))}
@@ -370,7 +401,7 @@ export default function App() {
                     <PropertyCard
                       key={project.ID || project.PROJECT_NAME}
                       project={project}
-                      onViewDetails={setSelectedProject}
+                      onViewDetails={openProperty}
                       onEnquire={handleOpenEligibility}
                     />
                   ))}
@@ -405,7 +436,10 @@ export default function App() {
       {/* Global Modals */}
       <PropertyDetailModal
         project={selectedProject}
-        onClose={() => setSelectedProject(null)}
+        onClose={() => {
+  setSelectedProject(null);
+  window.history.replaceState({}, '', '/');
+}}
         onApplyEligibility={handleOpenEligibility}
       />
 
