@@ -29,6 +29,8 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   }
 
   const [selectedImg, setSelectedImg] = useState<string>(allImages[0] || fallbackMain);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+const [lightboxIndex, setLightboxIndex] = useState(0);
 
   useEffect(() => {
     setSelectedImg(allImages[0] || fallbackMain);
@@ -65,7 +67,14 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
           
           {/* Main Visual Banner */}
           <div className="space-y-2.5 sm:space-y-3">
-            <div className="relative h-60 sm:h-96 w-full rounded-xl sm:rounded-2xl overflow-hidden bg-slate-950 border border-slate-800">
+            <div
+  className="relative h-60 sm:h-96 w-full rounded-xl sm:rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 cursor-zoom-in"
+  onClick={() => {
+    const index = allImages.indexOf(selectedImg);
+    setLightboxIndex(index >= 0 ? index : 0);
+    setLightboxOpen(true);
+  }}
+>
               <SafeImage
                 src={selectedImg}
                 propertyType={project.PROPERTY_TYPE}
@@ -265,5 +274,63 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 
       </div>
     </div>
+    {lightboxOpen && allImages.length > 0 && (
+  <div
+    className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4"
+    onClick={() => setLightboxOpen(false)}
+  >
+    <button
+      type="button"
+      onClick={() => setLightboxOpen(false)}
+      className="absolute top-4 right-4 z-[110] w-12 h-12 rounded-full bg-slate-800/80 hover:bg-slate-700 text-white flex items-center justify-center text-3xl"
+      aria-label="Close image viewer"
+    >
+      ×
+    </button>
+
+    {allImages.length > 1 && (
+      <>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setLightboxIndex(
+              (lightboxIndex - 1 + allImages.length) % allImages.length
+            );
+          }}
+          className="absolute left-4 z-[110] w-12 h-12 rounded-full bg-slate-800/80 hover:bg-slate-700 text-white text-4xl flex items-center justify-center"
+          aria-label="Previous image"
+        >
+          ‹
+        </button>
+
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setLightboxIndex(
+              (lightboxIndex + 1) % allImages.length
+            );
+          }}
+          className="absolute right-4 z-[110] w-12 h-12 rounded-full bg-slate-800/80 hover:bg-slate-700 text-white text-4xl flex items-center justify-center"
+          aria-label="Next image"
+        >
+          ›
+        </button>
+      </>
+    )}
+
+    <img
+      src={allImages[lightboxIndex]}
+      alt={`${project.PROJECT_NAME} - Image ${lightboxIndex + 1}`}
+      className="max-w-[95vw] max-h-[92vh] w-auto h-auto object-contain"
+      onClick={(e) => e.stopPropagation()}
+    />
+
+    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white text-sm px-4 py-2 rounded-full">
+      {lightboxIndex + 1} / {allImages.length}
+    </div>
+  </div>
+)}
   );
 };
