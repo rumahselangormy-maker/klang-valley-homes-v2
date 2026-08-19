@@ -37,6 +37,33 @@ async function startServer() {
       });
     }
   });
+  // API Proxy - GET Subsale Listings
+  app.get('/api/subsale', async (req, res) => {
+    try {
+      const response = await fetch(`${APPS_SCRIPT_URL}?action=subsale`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        return res.status(response.status).json({
+          success: false,
+          error: `Google Apps Script API status: ${response.status}`,
+        });
+      }
+
+      const data = await response.json();
+      return res.json(data);
+    } catch (err: any) {
+      console.error('Error fetching subsale from Apps Script:', err);
+      return res.status(500).json({
+        success: false,
+        error: err.message || 'Internal server error fetching subsale',
+      });
+    }
+  });
 
   // API Proxy - POST Lead
   app.post('/api/lead', async (req, res) => {

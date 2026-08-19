@@ -1,5 +1,27 @@
 import { Project, LeadFormData } from '../types';
 
+export interface SubsaleListing {
+  ID: string;
+  PROPERTY_NAME: string;
+  AREA: string;
+  ADDRESS: string;
+  PROPERTY_TYPE: string;
+  PRICE: string;
+  BEDROOMS: string;
+  BATHROOMS: string;
+  BUILT_UP: string;
+  LAND_SIZE: string;
+  TENURE: string;
+  TITLE: string;
+  STATUS: string;
+  DESCRIPTION: string;
+  IMAGE_1: string;
+  IMAGE_2: string;
+  IMAGE_3: string;
+  IMAGE_4: string;
+  IMAGE_5: string;
+}
+
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwe2A2tkjeqpwt6pqYRzdKfR2B6jdebprKqN0oSe_XQ8PaoWRc9XCqSEAucx-im1vGEoQ/exec';
 
 /**
@@ -30,8 +52,41 @@ export function normalizeProject(raw: Record<string, any>): Project {
     SORT_ORDER: String(raw.SORT_ORDER || raw.sort_order || raw['SORT ORDER'] || ''),
     LAST_UPDATED: String(raw.LAST_UPDATED || raw.last_updated || raw['LAST UPDATED'] || ''),
   };
-}
 
+}function normalizeDriveImageUrl(url: string): string {
+  if (!url) return '';
+
+  const match = url.match(/\/file\/d\/([^/]+)/);
+
+  if (match) {
+    return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1200`;
+  }
+
+  return url;
+}
+export function normalizeSubsale(raw: Record<string, any>): SubsaleListing {
+  return {
+    ID: String(raw.ID || raw.id || ''),
+    PROPERTY_NAME: String(raw.PROPERTY_NAME || raw.property_name || ''),
+    AREA: String(raw.AREA || raw.area || ''),
+    ADDRESS: String(raw.ADDRESS || raw.address || ''),
+    PROPERTY_TYPE: String(raw.PROPERTY_TYPE || raw.property_type || ''),
+    PRICE: String(raw.PRICE || raw.price || ''),
+    BEDROOMS: String(raw.BEDROOMS || raw.bedrooms || ''),
+    BATHROOMS: String(raw.BATHROOMS || raw.bathrooms || ''),
+    BUILT_UP: String(raw.BUILT_UP || raw.built_up || ''),
+    LAND_SIZE: String(raw.LAND_SIZE || raw.land_size || ''),
+    TENURE: String(raw.TENURE || raw.tenure || ''),
+    TITLE: String(raw.TITLE || raw.title || ''),
+    STATUS: String(raw.STATUS || raw.status || ''),
+    DESCRIPTION: String(raw.DESCRIPTION || raw.description || ''),
+    IMAGE_1: normalizeDriveImageUrl(String(raw.IMAGE_1 || raw.image_1 || '')),
+IMAGE_2: normalizeDriveImageUrl(String(raw.IMAGE_2 || raw.image_2 || '')),
+IMAGE_3: normalizeDriveImageUrl(String(raw.IMAGE_3 || raw.image_3 || '')),
+IMAGE_4: normalizeDriveImageUrl(String(raw.IMAGE_4 || raw.image_4 || '')),
+IMAGE_5: normalizeDriveImageUrl(String(raw.IMAGE_5 || raw.image_5 || '')),
+  };
+}
 /**
  * Fetch projects from API (Express route or direct Google Apps Script fallback)
  */
@@ -64,7 +119,42 @@ export async function fetchProjects(): Promise<Project[]> {
 
   return [];
 }
+/**
+ * Fetch subsale listings from API
+ */
+export async function fetchSubsale(): Promise<SubsaleListing[]> {
+  try {
+    // Try Express backend route first
+    const response = await fetch('/api/subsale');
 
+    if (response.ok) {
+      const data = await response.json();
+
+      if (data.success && Array.isArray(data.subsale)) {
+        return data.subsale.map(normalizeSubsale);
+      }
+    }
+  } catch (err) {
+    console.warn('Express subsale route failed, attempting direct fetch:', err);
+  }
+
+  // Fallback to direct Google Apps Script
+  try {
+    const directRes = await fetch(`${APPS_SCRIPT_URL}?action=subsale`);
+
+    if (directRes.ok) {
+      const data = await directRes.json();
+
+      if (data.success && Array.isArray(data.subsale)) {
+        return data.subsale.map(normalizeSubsale);
+      }
+    }
+  } catch (err) {
+    console.error('Direct subsale fetch failed:', err);
+  }
+
+  return [];
+}
 /**
  * Submit lead form to Google Apps Script API
  */

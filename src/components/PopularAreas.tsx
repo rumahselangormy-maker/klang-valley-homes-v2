@@ -25,7 +25,7 @@ export const PopularAreas: React.FC<PopularAreasProps> = ({ projects, onSelectAr
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div>
             <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block mb-1">
-              Kawasan Tumpuan Utamakan
+              Kawasan Tumpuan Utama
             </span>
             <h2 className="text-2xl sm:text-4xl font-serif font-bold text-white">
               Popular Areas in Klang Valley
