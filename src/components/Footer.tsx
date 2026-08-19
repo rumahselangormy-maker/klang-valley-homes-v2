@@ -11,23 +11,55 @@ export const Footer: React.FC<FooterProps> = () => {
   return (
     <footer className="bg-slate-950 border-t border-slate-800 text-slate-300 text-xs sm:text-sm">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        
+
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 pb-8 border-b border-slate-800/80">
-          
+
           {/* Brand & Tagline */}
           <div className="space-y-2">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
                 <Building2 className="w-4 h-4" />
               </div>
+
               <h3 className="font-serif text-lg font-bold text-white tracking-wide uppercase">
                 Klang Valley <span className="text-amber-400">Homes</span>
               </h3>
             </div>
+
             <p className="text-slate-400 text-xs sm:text-sm leading-relaxed pl-10">
               Find a home that fits your needs.
             </p>
+
+            {/* Social Media */}
+            <div className="pt-2 pl-10 flex flex-wrap items-center gap-2">
+              <a
+                href="https://www.facebook.com/share/19BpbQxgi6/?mibextid=wwXIfr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-300 hover:text-amber-400 hover:border-amber-500/30 transition-colors"
+              >
+                Facebook
+              </a>
+
+              <a
+                href="https://www.tiktok.com/@rumahselangor.my"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-300 hover:text-amber-400 hover:border-amber-500/30 transition-colors"
+              >
+                TikTok
+              </a>
+
+              <a
+                href="https://www.instagram.com/klang_valley_homes?igsh=d3liZzZ2M2JrcXp6&utm_source=qr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-300 hover:text-amber-400 hover:border-amber-500/30 transition-colors"
+              >
+                Instagram
+              </a>
+            </div>
           </div>
 
           {/* Property Services Info */}
@@ -36,9 +68,11 @@ export const Footer: React.FC<FooterProps> = () => {
               <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>Property Services by</span>
             </p>
+
             <h4 className="text-sm font-bold text-white font-serif">
               Affirm Plus Properties Sdn Bhd
             </h4>
+
             <p className="text-xs text-slate-400 font-mono">
               E (1) 1693
             </p>
@@ -50,12 +84,15 @@ export const Footer: React.FC<FooterProps> = () => {
               <User className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>Agent Contact</span>
             </div>
+
             <h4 className="text-sm font-bold text-white font-serif">
               Ryna Arif
             </h4>
+
             <p className="text-xs text-slate-300">
               Senior Real Estate Negotiator
             </p>
+
             <p className="text-xs text-slate-400 font-mono">
               REN 62310
             </p>
@@ -68,6 +105,7 @@ export const Footer: React.FC<FooterProps> = () => {
                 <Phone className="w-3.5 h-3.5 shrink-0" />
                 <span>Phone: 017-8399316</span>
               </a>
+
               <a
                 href="tel:+601114863480"
                 className="inline-flex items-center gap-2 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 px-3 py-1.5 rounded-lg w-fit"
@@ -89,4 +127,3 @@ export const Footer: React.FC<FooterProps> = () => {
     </footer>
   );
 };
-

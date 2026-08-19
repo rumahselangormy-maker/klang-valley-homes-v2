@@ -17,7 +17,17 @@ import { Footer } from './components/Footer';
 import { Building2, Loader2, RefreshCw, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('home');
+  const getInitialTab = (): ActiveTab => {
+  const path = window.location.pathname;
+
+  if (path === '/kalkulator-loan') return 'calculator';
+
+if (path.startsWith('/property/')) return 'properties';
+
+return 'home';
+};
+
+const [activeTab, setActiveTab] = useState<ActiveTab>(getInitialTab);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -56,9 +66,39 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    loadData();
-  }, []);
+ useEffect(() => {
+  loadData();
+
+  const path = window.location.pathname;
+
+  if (path === '/semak-kelayakan') {
+    setIsEligibilityOpen(true);
+  }
+
+  if (path.startsWith('/property/')) {
+  const areaSlug = path.replace('/property/', '').replace(/\/$/, '');
+
+  const areaMap: Record<string, string> = {
+    'shah-alam': 'SHAH ALAM',
+    'klang': 'KLANG',
+    'puncak-alam': 'PUNCAK ALAM',
+    'puchong': 'PUCHONG',
+    'jenjarom': 'JENJAROM',
+    'pulau-indah': 'PULAU INDAH',
+    'subang': 'SUBANG',
+    'petaling-jaya': 'PETALING JAYA',
+  };
+
+  const selectedArea = areaMap[areaSlug];
+
+  if (selectedArea) {
+    setFilters((prev) => ({
+      ...prev,
+      area: selectedArea,
+    }));
+  }
+}
+}, []);
 
   // Distinct available areas incorporating core Klang Valley areas and dynamic API projects
   const availableAreas = useMemo(() => {
