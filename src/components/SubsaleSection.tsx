@@ -15,6 +15,22 @@ interface SubsaleSectionProps {
   onOpenEligibility?: (propertyName?: string) => void;
 }
 
+/**
+ * Create a clean URL slug for a subsale listing.
+ *
+ * Example:
+ * "Kelana Impian Apartment, Kelana Jaya"
+ * =>
+ * "kelana-impian-apartment-kelana-jaya"
+ */
+const createSubsaleSlug = (listing: SubsaleListing): string => {
+  return (listing.PROPERTY_NAME || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
 export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
   onOpenEligibility,
 }) => {
@@ -23,6 +39,47 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
   const [selectedSubsale, setSelectedSubsale] =
     useState<SubsaleListing | null>(null);
 
+  /**
+   * Open a subsale listing and update browser URL.
+   */
+  const openSubsale = (listing: SubsaleListing) => {
+    setSelectedSubsale(listing);
+
+    const slug = createSubsaleSlug(listing);
+
+    if (slug) {
+      window.history.pushState(
+        {},
+        '',
+        `/subsale/${slug}`
+      );
+    }
+  };
+
+  /**
+   * Close modal and return to homepage URL.
+   */
+  const closeSubsale = () => {
+    setSelectedSubsale(null);
+
+    if (window.location.pathname.startsWith('/subsale/')) {
+      window.history.pushState(
+        {},
+        '',
+        '/'
+      );
+    }
+  };
+
+  /**
+   * Load subsale listings.
+   *
+   * Also checks whether the current URL is:
+   *
+   * /subsale/{slug}
+   *
+   * If yes, automatically opens the matching listing.
+   */
   useEffect(() => {
     let isMounted = true;
 
@@ -30,11 +87,33 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
       try {
         const listings = await fetchSubsale();
 
-        if (isMounted) {
-          setSubsaleListings(listings);
+        if (!isMounted) {
+          return;
+        }
+
+        setSubsaleListings(listings);
+
+        const pathname = window.location.pathname;
+
+        if (pathname.startsWith('/subsale/')) {
+          const slug = pathname
+            .replace('/subsale/', '')
+            .replace(/\/$/, '');
+
+          const matchedListing = listings.find(
+            (listing) =>
+              createSubsaleSlug(listing) === slug
+          );
+
+          if (matchedListing) {
+            setSelectedSubsale(matchedListing);
+          }
         }
       } catch (error) {
-        console.error('Failed to load subsale listings:', error);
+        console.error(
+          'Failed to load subsale listings:',
+          error
+        );
 
         if (isMounted) {
           setSubsaleListings([]);
@@ -52,6 +131,51 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
       isMounted = false;
     };
   }, []);
+
+  /**
+   * Handle browser Back / Forward buttons.
+   *
+   * Example:
+   * /subsale/kelana-impian-apartment-kelana-jaya
+   * ->
+   * Back
+   * ->
+   * /
+   */
+  useEffect(() => {
+    const handlePopState = () => {
+      const pathname = window.location.pathname;
+
+      if (pathname.startsWith('/subsale/')) {
+        const slug = pathname
+          .replace('/subsale/', '')
+          .replace(/\/$/, '');
+
+        const matchedListing = subsaleListings.find(
+          (listing) =>
+            createSubsaleSlug(listing) === slug
+        );
+
+        setSelectedSubsale(
+          matchedListing || null
+        );
+      } else {
+        setSelectedSubsale(null);
+      }
+    };
+
+    window.addEventListener(
+      'popstate',
+      handlePopState
+    );
+
+    return () => {
+      window.removeEventListener(
+        'popstate',
+        handlePopState
+      );
+    };
+  }, [subsaleListings]);
 
   return (
     <>
@@ -110,6 +234,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
 
             <div className="relative z-10 space-y-2.5">
 
+              {/* Service label */}
               <div
                 className="
                   inline-flex items-center gap-2
@@ -427,9 +552,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                             <button
                               type="button"
                               onClick={() =>
-                                setSelectedSubsale(
-                                  listing
-                                )
+                                openSubsale(listing)
                               }
                               className="
                                 w-full mt-2
@@ -477,7 +600,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
       {/* Detail Modal */}
       <SubsaleDetailModal
         listing={selectedSubsale}
-        onClose={() => setSelectedSubsale(null)}
+        onClose={closeSubsale}
         onApplyEligibility={(propertyName) => {
           if (onOpenEligibility) {
             onOpenEligibility(propertyName);
