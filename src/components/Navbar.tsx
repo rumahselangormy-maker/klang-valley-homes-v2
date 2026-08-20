@@ -34,10 +34,23 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   const handleNavClick = (tab: ActiveTab) => {
-    setActiveTab(tab);
-    setIsMobileMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  setActiveTab(tab);
+  setIsMobileMenuOpen(false);
+
+  const pathMap: Record<ActiveTab, string> = {
+  home: '/',
+  properties: '/properties',
+  projects: '/projects',
+  calculator: '/kalkulator-loan',
+  about: '/about',
+  contact: '/contact',
+  eligibility: '/semak-kelayakan',
+};
+
+  window.history.pushState({}, '', pathMap[tab]);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
   return (
     <header
@@ -89,7 +102,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Primary CTA */}
           <div className="hidden sm:flex items-center gap-3">
             <button
-              onClick={() => onOpenEligibility()}
+              onClick={() => {
+  window.history.pushState({}, '', '/semak-kelayakan');
+  onOpenEligibility();
+}}
               className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-semibold text-sm shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all flex items-center gap-2 transform active:scale-95"
             >
               <CheckCircle className="w-4 h-4" />
@@ -100,7 +116,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Menu Button */}
           <div className="flex lg:hidden items-center gap-2">
             <button
-              onClick={() => onOpenEligibility()}
+              onClick={() => {
+  setIsMobileMenuOpen(false);
+  window.history.pushState({}, '', '/semak-kelayakan');
+  onOpenEligibility();
+}}
               className="sm:hidden px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-semibold text-xs flex items-center gap-1"
             >
               <span>Kelayakan</span>

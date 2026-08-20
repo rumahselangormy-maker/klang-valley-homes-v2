@@ -20,11 +20,17 @@ export default function App() {
   const getInitialTab = (): ActiveTab => {
   const path = window.location.pathname;
 
+  if (path === '/properties') return 'properties';
+  if (path === '/projects') return 'projects';
   if (path === '/kalkulator-loan') return 'calculator';
+  if (path === '/about') return 'about';
+  if (path === '/contact') return 'contact';
+  if (path === '/semak-kelayakan') return 'eligibility';
 
-if (path.startsWith('/property/')) return 'properties';
+  if (path.startsWith('/area/')) return 'properties';
+  if (path.startsWith('/property/')) return 'properties';
 
-return 'home';
+  return 'home';
 };
 
 const [activeTab, setActiveTab] = useState<ActiveTab>(getInitialTab);
@@ -106,8 +112,8 @@ if (pathname.startsWith('/property/')) {
     setIsEligibilityOpen(true);
   }
 
-  if (path.startsWith('/property/')) {
-  const areaSlug = path.replace('/property/', '').replace(/\/$/, '');
+  if (path.startsWith('/area/')) {
+  const areaSlug = path.replace('/area/', '').replace(/\/$/, '');
 
   const areaMap: Record<string, string> = {
     'shah-alam': 'SHAH ALAM',
@@ -245,10 +251,19 @@ if (pathname.startsWith('/property/')) {
   };
 
   const handleSelectArea = (areaName: string) => {
-    setFilters((prev) => ({ ...prev, area: areaName.toUpperCase() }));
-    setActiveTab('properties');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  setFilters((prev) => ({ ...prev, area: areaName.toUpperCase() }));
+  setActiveTab('properties');
+
+  const areaSlug = areaName
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  window.history.pushState({}, '', `/area/${areaSlug}`);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
   const handleHeroViewProperties = (initialFilters?: Partial<FilterState>) => {
     if (initialFilters) {
