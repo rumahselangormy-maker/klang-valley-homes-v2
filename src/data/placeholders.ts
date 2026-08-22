@@ -264,9 +264,9 @@ export const POPULAR_AREAS = [
       'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
   },
   {
-    name: 'Subang',
+    name: 'Telok Panglima Garang',
     tagline:
-      'Premier lifestyle hub, transit convenience & commercial centers',
+      'Growing township with convenient access to Klang & major highways',
     image:
       'https://images.unsplash.com/photo-1567496898669-ee935f5f647a?auto=format&fit=crop&w=800&q=80',
   },

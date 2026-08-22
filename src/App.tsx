@@ -154,7 +154,7 @@ export default function App() {
         'puchong': 'PUCHONG',
         'jenjarom': 'JENJAROM',
         'pulau-indah': 'PULAU INDAH',
-        'subang': 'SUBANG',
+        'telok-panglima-garang': 'TELOK PANGLIMA GARANG',
         'petaling-jaya': 'PETALING JAYA',
       };
 
@@ -179,7 +179,7 @@ export default function App() {
       'PUCHONG',
       'JENJAROM',
       'PULAU INDAH',
-      'SUBANG',
+      'TELOK PANGLIMA GARANG',
       'PETALING JAYA',
     ];
 
