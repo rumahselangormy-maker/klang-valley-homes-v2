@@ -9,15 +9,15 @@ export const ProcessSteps: React.FC<ProcessStepsProps> = ({ onOpenEligibility })
   const steps = [
     {
       num: '01',
-      title: 'Pilih & Teroka Projek',
-      desc: 'Semak senarai hartanah dan projek perumahan terkini mengikut kawasan, jenis rumah serta bajet impian anda.',
-      icon: Search,
-    },
-    {
-      num: '02',
       title: 'Semakan Kelayakan Loan',
       desc: 'Isi borang semakan kelayakan pantas untuk mengetahui anggaran margin pinjaman bank dan komitmen bulanan.',
       icon: FileCheck2,
+    },
+    {
+      num: '02',
+      title: 'Pilih & Teroka Projek',
+      desc: 'Semak senarai hartanah dan projek perumahan terkini mengikut kawasan, jenis rumah serta bajet impian anda.',
+      icon: Search,
     },
     {
       num: '03',
