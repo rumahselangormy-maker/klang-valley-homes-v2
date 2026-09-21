@@ -36,7 +36,7 @@ export const onRequestGet = async () => {
     return Response.json(publicPayload, {
       status: 200,
       headers: {
-        'Cache-Control': 'no-store',
+        'Cache-Control': 'public, max-age=0, s-maxage=120',
       },
     });
   } catch (error) {

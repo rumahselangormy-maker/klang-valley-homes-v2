@@ -735,14 +735,7 @@ export default function App() {
               }
             />
 
-            {/* 7. WHY CHOOSE US */}
-            <WhyChooseUs
-              onOpenEligibility={
-                handleOpenEligibility
-              }
-            />
-
-            {/* 8. CONTACT */}
+            {/* 7. CONTACT */}
             <ContactSection
               onOpenEligibility={
                 handleOpenEligibility

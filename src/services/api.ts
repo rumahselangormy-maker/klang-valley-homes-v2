@@ -15,6 +15,7 @@ export interface SubsaleListing {
   TENURE: string;
   TITLE: string;
   STATUS: string;
+  LOT_STATUS: string;
   DESCRIPTION: string;
   IMAGE_1: string;
   IMAGE_2: string;
@@ -48,6 +49,10 @@ export function normalizeProject(raw: Record<string, any>): Project {
         raw['Price From'] ||
         ''
     ),
+    MONTHLY_ESTIMATE: String(
+      raw.MONTHLY_ESTIMATE || raw.monthly_estimate || raw['MONTHLY ESTIMATE'] || ''
+    ),
+    LOT_STATUS: String(raw.LOT_STATUS || raw.lot_status || raw['LOT STATUS'] || ''),
     PROPERTY_TYPE: String(
       raw.PROPERTY_TYPE ||
         raw.property_type ||
@@ -302,6 +307,13 @@ export function normalizeSubsale(
         ''
     ),
 
+    LOT_STATUS: String(
+      raw.LOT_STATUS ||
+        raw.lot_status ||
+        raw['LOT STATUS'] ||
+        ''
+    ),
+
     DESCRIPTION: String(
       raw.DESCRIPTION ||
         raw.description ||
@@ -355,8 +367,7 @@ export function normalizeSubsale(
  * Fails closed so private upstream rows are never downloaded by the browser.
  */
 export async function fetchProjects(): Promise<Project[]> {
-  try {
-    const response = await fetch('/api/projects');
+  const response = await fetch('/api/projects');
 
     if (response.ok) {
       const data = await response.json();
@@ -369,11 +380,7 @@ export async function fetchProjects(): Promise<Project[]> {
           .map(normalizeProject);
       }
     }
-  } catch (err) {
-    console.error('Projects API fetch failed:', err);
-  }
-
-  return [];
+  throw new Error(`Projects API request failed (${response.status})`);
 }
 
 /**
@@ -383,8 +390,7 @@ export async function fetchProjects(): Promise<Project[]> {
 export async function fetchSubsale(): Promise<
   SubsaleListing[]
 > {
-  try {
-    const response = await fetch('/api/subsale');
+  const response = await fetch('/api/subsale');
 
     if (response.ok) {
       const data = await response.json();
@@ -397,11 +403,7 @@ export async function fetchSubsale(): Promise<
           .map(normalizeSubsale);
       }
     }
-  } catch (err) {
-    console.error('Subsale API fetch failed:', err);
-  }
-
-  return [];
+  throw new Error(`Subsale API request failed (${response.status})`);
 }
 
 /**

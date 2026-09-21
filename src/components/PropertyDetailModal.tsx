@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { X, MapPin, Bed, Bath, Maximize2, Layers, Calendar, Gift, CheckCircle2, ExternalLink, ShieldCheck, Sparkles } from 'lucide-react';
+import { X, MapPin, Bed, Bath, Maximize2, Calendar, Gift, CheckCircle2, ExternalLink, ShieldCheck, Sparkles } from 'lucide-react';
 import { Project } from '../types';
-import { getPropertyImage, parseImageUrls } from '../data/placeholders';
+import { parseImageUrls } from '../data/placeholders';
 import { SafeImage } from './SafeImage';
+import { calculateMonthlyEstimate, formatRinggit, getPropertySizeDisplay, normalizeArea } from '../services/propertyPresentation';
 
 interface PropertyDetailModalProps {
   project: Project | null;
@@ -17,24 +18,21 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 }) => {
   if (!project) return null;
 
-  const fallbackMain = getPropertyImage(project.MAIN_IMAGE, project.PROPERTY_TYPE, project.ID);
-
   // Parse all image URLs from MAIN_IMAGE and GALLERY_URLS (handles Google Drive URLs automatically)
   const mainImageUrls = parseImageUrls(project.MAIN_IMAGE);
   const galleryList = parseImageUrls(project.GALLERY_URLS);
 
   const allImages = Array.from(new Set([...mainImageUrls, ...galleryList])).filter(Boolean);
-  if (allImages.length === 0) {
-    allImages.push(fallbackMain);
-  }
-
-  const [selectedImg, setSelectedImg] = useState<string>(allImages[0] || fallbackMain);
+  const [selectedImg, setSelectedImg] = useState<string>(allImages[0] || '');
   const [lightboxOpen, setLightboxOpen] = useState(false);
 const [lightboxIndex, setLightboxIndex] = useState(0);
 
   useEffect(() => {
-    setSelectedImg(allImages[0] || fallbackMain);
+    setSelectedImg(allImages[0] || '');
   }, [project.ID]);
+
+  const size = getPropertySizeDisplay(project.PROPERTY_TYPE, project.BUILT_UP, project.LAND_SIZE);
+  const monthly = Number(project.MONTHLY_ESTIMATE) || calculateMonthlyEstimate(project.PRICE_FROM);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-in fade-in duration-200">
@@ -46,7 +44,7 @@ const [lightboxIndex, setLightboxIndex] = useState(0);
         <div className="sticky top-0 z-20 px-4 py-3 sm:px-5 sm:py-4 bg-slate-900/95 border-b border-slate-800 backdrop-blur-md flex items-center justify-between">
           <div className="pr-3">
             <span className="text-[10px] sm:text-xs font-semibold text-amber-400 uppercase tracking-wider block">
-              {project.AREA} • {project.PROPERTY_TYPE}
+              {normalizeArea(project.AREA)} • {project.PROPERTY_TYPE}
             </span>
             <h2 className="text-base sm:text-2xl font-serif font-bold text-white line-clamp-1">
               {project.PROJECT_NAME}
@@ -75,26 +73,27 @@ const [lightboxIndex, setLightboxIndex] = useState(0);
     setLightboxOpen(true);
   }}
 >
-              <SafeImage
+              {selectedImg ? <SafeImage
                 src={selectedImg}
                 propertyType={project.PROPERTY_TYPE}
                 projectId={project.ID}
                 alt={project.PROJECT_NAME}
                 className="w-full h-full object-cover"
-              />
+                disableFallback
+              /> : <div className="w-full h-full flex items-center justify-center text-slate-500 text-sm">Tiada gambar tersedia.</div>}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-30 sm:opacity-70 pointer-events-none" />
 
               <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-4 sm:left-4 sm:right-4 flex items-end justify-between gap-2 z-10">
                 <div className="bg-transparent border-0 p-0 sm:bg-slate-950/85 sm:backdrop-blur-md sm:px-4 sm:py-2 sm:rounded-xl sm:border sm:border-slate-800/80">
                   <span className="text-[10px] sm:text-xs text-amber-300 block font-semibold leading-tight drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.9)] sm:drop-shadow-none">Harga Bermula / Price From</span>
                   <span className="text-base sm:text-2xl font-serif font-bold text-white leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] sm:drop-shadow-none">
-                    {project.PRICE_FROM || 'Hubungi Untuk Harga'}
+                    {formatRinggit(project.PRICE_FROM)}
                   </span>
                 </div>
 
                 <div className="flex flex-wrap sm:flex-nowrap justify-end gap-1.5 sm:gap-2">
                   <span className="px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-md sm:rounded-lg bg-amber-500 text-slate-950 font-bold text-[10px] sm:text-xs uppercase whitespace-nowrap shadow-md">
-                    {project.STATUS || 'ON GOING'}
+                    {project.LOT_STATUS || project.STATUS || 'AVAILABLE'}
                   </span>
                   {project.TENURE && (
                     <span className="px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-md sm:rounded-lg bg-slate-950/80 backdrop-blur-sm sm:bg-slate-900/90 text-slate-200 border border-slate-700/80 font-semibold text-[10px] sm:text-xs uppercase whitespace-nowrap shadow-md">
@@ -122,6 +121,7 @@ const [lightboxIndex, setLightboxIndex] = useState(0);
                       projectId={project.ID}
                       alt={`Gallery thumb ${idx + 1}`}
                       className="w-full h-full object-cover"
+                      disableFallback
                     />
                   </button>
                 ))}
@@ -129,8 +129,17 @@ const [lightboxIndex, setLightboxIndex] = useState(0);
             )}
           </div>
 
+          <div className="rounded-xl border border-amber-500/20 bg-slate-950 p-4">
+            <span className="text-xs font-semibold text-amber-400">Harga Bermula</span>
+            <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+              <strong className="text-2xl font-serif text-white">{formatRinggit(project.PRICE_FROM)}</strong>
+              {monthly > 0 && <span className="text-sm font-semibold text-amber-300">Anggaran RM{monthly.toLocaleString('en-MY')} / bulanan</span>}
+            </div>
+            {monthly > 0 && <p className="mt-2 text-[11px] text-slate-500">Tertakluk kepada kadar bank, tempoh pembiayaan dan kelulusan pinjaman.</p>}
+          </div>
+
           {/* Key Specifications Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 p-3 sm:p-4 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800/80">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-4 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800/80">
             <div className="p-2.5 sm:p-3 bg-slate-900/60 rounded-lg sm:rounded-xl border border-slate-800/50">
               <span className="text-[10px] sm:text-xs text-slate-400 flex items-center gap-1 mb-0.5 sm:mb-1">
                 <Bed className="w-3.5 h-3.5 text-amber-400 shrink-0" />
@@ -150,17 +159,9 @@ const [lightboxIndex, setLightboxIndex] = useState(0);
             <div className="p-2.5 sm:p-3 bg-slate-900/60 rounded-lg sm:rounded-xl border border-slate-800/50">
               <span className="text-[10px] sm:text-xs text-slate-400 flex items-center gap-1 mb-0.5 sm:mb-1">
                 <Maximize2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span>Built-up</span>
+                <span>{size.label}</span>
               </span>
-              <p className="text-xs sm:text-sm font-bold text-white">{project.BUILT_UP || '-'}</p>
-            </div>
-
-            <div className="p-2.5 sm:p-3 bg-slate-900/60 rounded-lg sm:rounded-xl border border-slate-800/50">
-              <span className="text-[10px] sm:text-xs text-slate-400 flex items-center gap-1 mb-0.5 sm:mb-1">
-                <Layers className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span>Land Size</span>
-              </span>
-              <p className="text-xs sm:text-sm font-bold text-white">{project.LAND_SIZE || '-'}</p>
+              <p className="text-xs sm:text-sm font-bold text-white">{size.value}</p>
             </div>
           </div>
 
@@ -175,7 +176,7 @@ const [lightboxIndex, setLightboxIndex] = useState(0);
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
                 {project.DESCRIPTION ||
-                  `${project.PROJECT_NAME} merupakan pembangunan hartanah ${project.PROPERTY_TYPE} eksklusif di kawasan strategik ${project.AREA}, Klang Valley. Menawarkan rekabentuk moden, persekitaran mesra keluarga serta kemudahan akses berhampiran lebuhraya utama.`}
+                  `${project.PROJECT_NAME} merupakan pembangunan hartanah ${project.PROPERTY_TYPE} eksklusif di kawasan strategik ${normalizeArea(project.AREA)}, Klang Valley. Menawarkan rekabentuk moden, persekitaran mesra keluarga serta kemudahan akses berhampiran lebuhraya utama.`}
               </p>
             </div>
 

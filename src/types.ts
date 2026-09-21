@@ -3,6 +3,8 @@ export interface Project {
   AREA: string;
   PROJECT_NAME: string;
   PRICE_FROM: string;
+  MONTHLY_ESTIMATE: string;
+  LOT_STATUS: string;
   PROPERTY_TYPE: string;
   BUILT_UP: string;
   LAND_SIZE: string;

@@ -9,11 +9,9 @@ import {
   createPublicListingSlug,
   findPublicListingBySlug,
 } from '../services/publicListingVisibility';
-import {
-  transformImageUrl,
-  getFallbackPlaceholder,
-} from '../data/placeholders';
+import { transformImageUrl } from '../data/placeholders';
 import { SubsaleDetailModal } from './SubsaleDetailModal';
+import { calculateMonthlyEstimate, formatRinggit, getPropertySizeDisplay, normalizeArea } from '../services/propertyPresentation';
 
 interface SubsaleSectionProps {
   onOpenEligibility?: (propertyName?: string) => void;
@@ -36,6 +34,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
 }) => {
   const [subsaleListings, setSubsaleListings] = useState<SubsaleListing[]>([]);
   const [isLoadingSubsale, setIsLoadingSubsale] = useState(true);
+  const [subsaleError, setSubsaleError] = useState(false);
   const [selectedSubsale, setSelectedSubsale] =
     useState<SubsaleListing | null>(null);
 
@@ -85,6 +84,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
 
     const loadSubsale = async () => {
       try {
+        setSubsaleError(false);
         const listings = await fetchSubsale();
 
         if (!isMounted) {
@@ -118,6 +118,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
 
         if (isMounted) {
           setSubsaleListings([]);
+          setSubsaleError(true);
         }
       } finally {
         if (isMounted) {
@@ -326,6 +327,8 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                       const image = transformImageUrl(
                         listing.IMAGE_1 || ''
                       );
+                      const size = getPropertySizeDisplay(listing.PROPERTY_TYPE, listing.BUILT_UP, listing.LAND_SIZE);
+                      const monthly = calculateMonthlyEstimate(listing.PRICE);
 
                       return (
                         <div
@@ -366,17 +369,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                                   duration-500
                                 "
                                 loading="lazy"
-                                onError={(event) => {
-                                  const fallback =
-                                    getFallbackPlaceholder(
-                                      listing.PROPERTY_TYPE,
-                                      listing.ID
-                                    );
-
-                                  event.currentTarget.onerror = null;
-                                  event.currentTarget.src =
-                                    fallback;
-                                }}
+                                onError={(event) => { event.currentTarget.style.display = 'none'; }}
                               />
                             </div>
                           ) : (
@@ -406,7 +399,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                                     font-bold
                                   "
                                 >
-                                  {listing.AREA}
+                                  {normalizeArea(listing.AREA)}
                                 </span>
 
                                 <h5
@@ -423,7 +416,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                                 </h5>
                               </div>
 
-                              {listing.STATUS && (
+                              {(listing.LOT_STATUS || listing.STATUS) && (
                                 <span
                                   className="
                                     text-[10px]
@@ -435,7 +428,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                                     whitespace-nowrap
                                   "
                                 >
-                                  {listing.STATUS}
+                                  {listing.LOT_STATUS || listing.STATUS}
                                 </span>
                               )}
                             </div>
@@ -457,8 +450,9 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                                   </span>
 
                                   <strong className="text-amber-400">
-                                    {listing.PRICE}
+                                    {formatRinggit(listing.PRICE)}
                                   </strong>
+                                  {monthly > 0 && <span className="block text-[10px] text-slate-400">Anggaran RM{monthly.toLocaleString('en-MY')} / bulanan</span>}
                                 </div>
                               )}
 
@@ -506,20 +500,11 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                               listing.TENURE) && (
                               <div className="text-xs text-slate-400 space-y-1">
 
-                                {listing.BUILT_UP && (
+                                {(listing.BUILT_UP || listing.LAND_SIZE) && (
                                   <div>
-                                    Built Up:{' '}
+                                    {size.label}:{' '}
                                     <span className="text-slate-200">
-                                      {listing.BUILT_UP}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {listing.LAND_SIZE && (
-                                  <div>
-                                    Land Size:{' '}
-                                    <span className="text-slate-200">
-                                      {listing.LAND_SIZE}
+                                      {size.value}
                                     </span>
                                   </div>
                                 )}
@@ -592,6 +577,10 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                     Memuatkan listing subsale...
                   </div>
                 </div>
+              )}
+
+              {!isLoadingSubsale && subsaleError && (
+                <div className="pt-8 text-center text-sm text-rose-300">Tidak dapat memuatkan listing subsale. Sila cuba sebentar lagi.</div>
               )}
 
             </div>

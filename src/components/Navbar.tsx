@@ -74,10 +74,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div>
               <span className="block font-serif text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">
-                Klang Valley <span className="text-amber-400">Homes</span>
+                HOME BEGINS <span className="text-amber-400">HERE</span>
               </span>
-              <span className="block text-[10px] uppercase tracking-widest text-slate-400 font-medium">
-                Property Platform Malaysia
+              <span className="block text-[10px] tracking-widest text-slate-400 font-medium">
+                Find what fits your life.
               </span>
             </div>
           </button>

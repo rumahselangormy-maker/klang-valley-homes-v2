@@ -1,8 +1,8 @@
 import React from 'react';
 import { MapPin, Bed, Bath, Maximize2, Tag, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { Project } from '../types';
-import { getPropertyImage } from '../data/placeholders';
 import { SafeImage } from './SafeImage';
+import { formatRinggit, getPropertySizeDisplay, normalizeArea } from '../services/propertyPresentation';
 
 interface PropertyCardProps {
   project: Project;
@@ -15,7 +15,8 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   onViewDetails,
   onEnquire,
 }) => {
-  const imageUrl = getPropertyImage(project.MAIN_IMAGE, project.PROPERTY_TYPE, project.ID);
+  const imageUrl = project.MAIN_IMAGE;
+  const size = getPropertySizeDisplay(project.PROPERTY_TYPE, project.BUILT_UP, project.LAND_SIZE);
 
   return (
     <div className="bg-slate-900 rounded-2xl border border-slate-800/80 overflow-hidden shadow-lg hover:shadow-2xl hover:border-amber-500/40 transition-all duration-300 flex flex-col group">
@@ -28,6 +29,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           projectId={project.ID}
           alt={project.PROJECT_NAME}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          disableFallback
         />
 
         {/* Gradient Overlay */}
@@ -37,7 +39,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 z-10">
           {/* Status Badge */}
           <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-950/80 text-amber-400 border border-amber-500/30 backdrop-blur-md">
-            {project.STATUS || 'ON GOING'}
+            {project.LOT_STATUS || project.STATUS || 'AVAILABLE'}
           </span>
 
           {/* Tenure Badge */}
@@ -52,7 +54,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         <div className="absolute bottom-3 left-3 right-3 z-10">
           <span className="text-xs text-amber-300/90 font-medium block">Price From / Harga Bermula</span>
           <span className="text-xl sm:text-2xl font-serif font-bold text-white tracking-tight">
-            {project.PRICE_FROM || 'Hubungi Untuk Harga'}
+            {formatRinggit(project.PRICE_FROM)}
           </span>
         </div>
       </div>
@@ -64,7 +66,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           {/* Location Area */}
           <div className="flex items-center gap-1.5 text-slate-400 text-xs font-semibold uppercase tracking-wider">
             <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="truncate">{project.AREA || 'Klang Valley'}</span>
+            <span className="truncate">{normalizeArea(project.AREA) || 'Klang Valley'}</span>
           </div>
 
           {/* Project Name */}
@@ -103,9 +105,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="flex flex-col items-center justify-center p-1">
             <div className="flex items-center gap-1 text-slate-300 text-xs font-semibold">
               <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
-              <span className="truncate">{project.BUILT_UP || '-'}</span>
+              <span className="truncate">{size.value}</span>
             </div>
-            <span className="text-[10px] text-slate-500 uppercase font-medium">Keluasan</span>
+            <span className="text-[10px] text-slate-500 uppercase font-medium">{size.label}</span>
           </div>
         </div>
 

@@ -103,7 +103,7 @@ test('Project public API filters before responding to the browser', async () => 
   const body = await response.json() as Record<string, any>;
 
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get('Cache-Control'), 'no-store');
+  assert.equal(response.headers.get('Cache-Control'), 'public, max-age=0, s-maxage=120');
   assert.equal(body.count, 1);
   assert.deepEqual(body.projects.map((row: { ID: string }) => row.ID), ['P1']);
   assert.equal(JSON.stringify(body).includes('private project'), false);
@@ -123,7 +123,7 @@ test('Subsale public API filters before responding to the browser', async () => 
   const body = await response.json() as Record<string, any>;
 
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get('Cache-Control'), 'no-store');
+  assert.equal(response.headers.get('Cache-Control'), 'public, max-age=0, s-maxage=120');
   assert.equal(body.count, 1);
   assert.deepEqual(body.subsale.map((row: { ID: string }) => row.ID), ['S1']);
   assert.equal(JSON.stringify(body).includes('private subsale'), false);
@@ -168,8 +168,8 @@ test('listing fetch fails closed and never falls back to public Apps Script read
     throw new Error('Public API unavailable');
   };
 
-  assert.deepEqual(await fetchProjects(), []);
-  assert.deepEqual(await fetchSubsale(), []);
+  await assert.rejects(fetchProjects(), /Public API unavailable/);
+  await assert.rejects(fetchSubsale(), /Public API unavailable/);
   assert.deepEqual(requestedUrls, ['/api/projects', '/api/subsale']);
 });
 

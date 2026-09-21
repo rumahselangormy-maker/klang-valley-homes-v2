@@ -9,6 +9,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { SubsaleListing } from '../services/api';
+import { calculateMonthlyEstimate, formatRinggit, getPropertySizeDisplay, normalizeArea } from '../services/propertyPresentation';
 
 interface SubsaleDetailModalProps {
   listing: SubsaleListing | null;
@@ -278,6 +279,8 @@ export const SubsaleDetailModal: React.FC<
 
   const lightboxImage =
     lightboxSources[0] || '';
+  const size = getPropertySizeDisplay(listing.PROPERTY_TYPE, listing.BUILT_UP, listing.LAND_SIZE);
+  const monthly = calculateMonthlyEstimate(listing.PRICE);
 
   return (
     <div
@@ -330,7 +333,7 @@ export const SubsaleDetailModal: React.FC<
                 block
               "
             >
-              {listing.AREA} •{' '}
+              {normalizeArea(listing.AREA)} •{' '}
               {listing.PROPERTY_TYPE}
             </span>
 
@@ -454,14 +457,13 @@ export const SubsaleDetailModal: React.FC<
                     text-white
                   "
                 >
-                  {listing.PRICE ||
-                    'Hubungi Untuk Harga'}
+                  {formatRinggit(listing.PRICE)}
                 </span>
               </div>
 
               {/* Status */}
 
-              {listing.STATUS && (
+              {(listing.LOT_STATUS || listing.STATUS) && (
                 <span
                   className="
                     absolute top-3 right-3
@@ -475,7 +477,7 @@ export const SubsaleDetailModal: React.FC<
                     shadow-md
                   "
                 >
-                  {listing.STATUS}
+                  {listing.LOT_STATUS || listing.STATUS}
                 </span>
               )}
             </div>
@@ -570,6 +572,16 @@ export const SubsaleDetailModal: React.FC<
             )}
           </div>
 
+          <div className="rounded-xl border border-amber-500/20 bg-slate-950 p-4">
+            <span className="text-xs font-semibold text-amber-400">Harga</span>
+            <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+              <strong className="text-2xl font-serif text-white">{formatRinggit(listing.PRICE)}</strong>
+              <span className="text-xs font-semibold text-slate-300">Boleh Runding</span>
+              {monthly > 0 && <span className="text-sm font-semibold text-amber-300">Anggaran RM{monthly.toLocaleString('en-MY')} / bulanan</span>}
+            </div>
+            {monthly > 0 && <p className="mt-2 text-[11px] text-slate-500">Tertakluk kepada kadar bank, tempoh pembiayaan dan kelulusan pinjaman.</p>}
+          </div>
+
           {/* =========================
               ADDRESS
           ========================== */}
@@ -606,7 +618,7 @@ export const SubsaleDetailModal: React.FC<
 
                 {listing.AREA && (
                   <p className="text-slate-400">
-                    {listing.AREA}
+                    {normalizeArea(listing.AREA)}
                   </p>
                 )}
               </div>
@@ -620,7 +632,7 @@ export const SubsaleDetailModal: React.FC<
           <div
             className="
               grid grid-cols-2
-              sm:grid-cols-4
+              sm:grid-cols-3
               gap-2 sm:gap-3
               p-3 sm:p-4
               bg-slate-950
@@ -694,7 +706,7 @@ export const SubsaleDetailModal: React.FC<
               </p>
             </div>
 
-            {/* Built-up */}
+            {/* Property size */}
 
             <div
               className="
@@ -713,7 +725,7 @@ export const SubsaleDetailModal: React.FC<
                 "
               >
                 <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
-                Built-up
+                {size.label}
               </span>
 
               <p
@@ -723,40 +735,7 @@ export const SubsaleDetailModal: React.FC<
                   text-white
                 "
               >
-                {listing.BUILT_UP || '-'}
-              </p>
-            </div>
-
-            {/* Land Size */}
-
-            <div
-              className="
-                p-2.5 sm:p-3
-                bg-slate-900/60
-                rounded-lg
-                border border-slate-800/50
-              "
-            >
-              <span
-                className="
-                  text-[10px] sm:text-xs
-                  text-slate-400
-                  flex items-center
-                  gap-1 mb-1
-                "
-              >
-                <Layers className="w-3.5 h-3.5 text-amber-400" />
-                Land Size
-              </span>
-
-              <p
-                className="
-                  text-xs sm:text-sm
-                  font-bold
-                  text-white
-                "
-              >
-                {listing.LAND_SIZE || '-'}
+                {size.value}
               </p>
             </div>
           </div>
