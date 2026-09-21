@@ -1,3 +1,5 @@
+import { createPublicListingResponse } from '../../src/services/publicListingVisibility';
+
 const APPS_SCRIPT_URL =
   'https://script.google.com/macros/s/AKfycbwe2A2tkjeqpwt6pqYRzdKfR2B6jdebprKqN0oSe_XQ8PaoWRc9XCqSEAucx-im1vGEoQ/exec';
 
@@ -13,12 +15,28 @@ export const onRequestGet = async () => {
       }
     );
 
-    const text = await response.text();
+    if (!response.ok) {
+      return Response.json(
+        {
+          success: false,
+          count: 0,
+          projects: [],
+          error: 'Failed to fetch projects',
+        },
+        {
+          status: response.status,
+          headers: { 'Cache-Control': 'no-store' },
+        },
+      );
+    }
 
-    return new Response(text, {
-      status: response.status,
+    const payload = await response.json();
+    const publicPayload = createPublicListingResponse(payload, 'projects');
+
+    return Response.json(publicPayload, {
+      status: 200,
       headers: {
-        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
       },
     });
   } catch (error) {
@@ -29,7 +47,10 @@ export const onRequestGet = async () => {
         success: false,
         error: 'Failed to fetch projects',
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: { 'Cache-Control': 'no-store' },
+      }
     );
   }
 };

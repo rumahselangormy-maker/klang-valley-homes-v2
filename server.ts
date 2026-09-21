@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
+import { createPublicListingResponse } from './src/services/publicListingVisibility';
 
 const APPS_SCRIPT_URL =
   'https://script.google.com/macros/s/AKfycbwe2A2tkjeqpwt6pqYRzdKfR2B6jdebprKqN0oSe_XQ8PaoWRc9XCqSEAucx-im1vGEoQ/exec';
@@ -17,6 +18,8 @@ async function startServer() {
 
   app.get('/api/projects', async (req, res) => {
     try {
+      res.setHeader('Cache-Control', 'no-store');
+
       const response = await fetch(
         `${APPS_SCRIPT_URL}?action=projects`,
         {
@@ -34,7 +37,10 @@ async function startServer() {
         });
       }
 
-      const data = await response.json();
+      const data = createPublicListingResponse(
+        await response.json(),
+        'projects',
+      );
 
       return res.json(data);
     } catch (err: any) {
@@ -58,6 +64,8 @@ async function startServer() {
 
   app.get('/api/subsale', async (req, res) => {
     try {
+      res.setHeader('Cache-Control', 'no-store');
+
       const response = await fetch(
         `${APPS_SCRIPT_URL}?action=subsale`,
         {
@@ -75,7 +83,10 @@ async function startServer() {
         });
       }
 
-      const data = await response.json();
+      const data = createPublicListingResponse(
+        await response.json(),
+        'subsale',
+      );
 
       return res.json(data);
     } catch (err: any) {

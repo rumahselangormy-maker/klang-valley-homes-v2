@@ -6,6 +6,10 @@ import {
 } from 'lucide-react';
 import { fetchSubsale, SubsaleListing } from '../services/api';
 import {
+  createPublicListingSlug,
+  findPublicListingBySlug,
+} from '../services/publicListingVisibility';
+import {
   transformImageUrl,
   getFallbackPlaceholder,
 } from '../data/placeholders';
@@ -24,11 +28,7 @@ interface SubsaleSectionProps {
  * "kelana-impian-apartment-kelana-jaya"
  */
 const createSubsaleSlug = (listing: SubsaleListing): string => {
-  return (listing.PROPERTY_NAME || '')
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+  return createPublicListingSlug(listing.PROPERTY_NAME);
 };
 
 export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
@@ -100,9 +100,10 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
             .replace('/subsale/', '')
             .replace(/\/$/, '');
 
-          const matchedListing = listings.find(
-            (listing) =>
-              createSubsaleSlug(listing) === slug
+          const matchedListing = findPublicListingBySlug<SubsaleListing>(
+            listings,
+            slug,
+            (listing) => listing.PROPERTY_NAME,
           );
 
           if (matchedListing) {
@@ -151,9 +152,10 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
           .replace('/subsale/', '')
           .replace(/\/$/, '');
 
-        const matchedListing = subsaleListings.find(
-          (listing) =>
-            createSubsaleSlug(listing) === slug
+        const matchedListing = findPublicListingBySlug<SubsaleListing>(
+          subsaleListings,
+          slug,
+          (listing) => listing.PROPERTY_NAME,
         );
 
         setSelectedSubsale(

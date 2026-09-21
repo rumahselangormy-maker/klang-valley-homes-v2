@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Project, FilterState, ActiveTab } from './types';
 import { fetchProjects } from './services/api';
+import {
+  createPublicListingSlug,
+  findPublicListingBySlug,
+} from './services/publicListingVisibility';
 
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -57,11 +61,7 @@ export default function App() {
     useState<Project | null>(null);
 
   const createPropertySlug = (project: Project) =>
-    project.PROJECT_NAME
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+    createPublicListingSlug(project.PROJECT_NAME);
 
   const openProperty = (project: Project) => {
     setSelectedProject(project);
@@ -110,9 +110,10 @@ export default function App() {
           .replace('/property/', '')
           .replace(/\/$/, '');
 
-        const matchedProject = data.find(
-          (project) =>
-            createPropertySlug(project) === slug
+        const matchedProject = findPublicListingBySlug<Project>(
+          data,
+          slug,
+          (project) => project.PROJECT_NAME,
         );
 
         if (matchedProject) {

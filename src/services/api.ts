@@ -1,4 +1,5 @@
 import { Project, LeadFormData } from '../types';
+import { filterPublicListings } from './publicListingVisibility';
 
 export interface SubsaleListing {
   ID: string;
@@ -350,8 +351,8 @@ export function normalizeSubsale(
 }
 
 /**
- * Fetch projects from API
- * Express route first, then Google Apps Script fallback.
+ * Fetch public projects from the same-origin API.
+ * Fails closed so private upstream rows are never downloaded by the browser.
  */
 export async function fetchProjects(): Promise<Project[]> {
   try {
@@ -364,44 +365,20 @@ export async function fetchProjects(): Promise<Project[]> {
         data.success &&
         Array.isArray(data.projects)
       ) {
-        return data.projects.map(normalizeProject);
+        return filterPublicListings<Record<string, any>>(data.projects)
+          .map(normalizeProject);
       }
     }
   } catch (err) {
-    console.warn(
-      'Express route failed, attempting direct fetch:',
-      err
-    );
-  }
-
-  // Fallback to direct Google Apps Script
-  try {
-    const directRes = await fetch(
-      `${APPS_SCRIPT_URL}?action=projects`
-    );
-
-    if (directRes.ok) {
-      const data = await directRes.json();
-
-      if (
-        data.success &&
-        Array.isArray(data.projects)
-      ) {
-        return data.projects.map(normalizeProject);
-      }
-    }
-  } catch (err) {
-    console.error(
-      'Direct fetch failed:',
-      err
-    );
+    console.error('Projects API fetch failed:', err);
   }
 
   return [];
 }
 
 /**
- * Fetch subsale listings from API.
+ * Fetch public subsale listings from the same-origin API.
+ * Fails closed so private upstream rows are never downloaded by the browser.
  */
 export async function fetchSubsale(): Promise<
   SubsaleListing[]
@@ -416,37 +393,12 @@ export async function fetchSubsale(): Promise<
         data.success &&
         Array.isArray(data.subsale)
       ) {
-        return data.subsale.map(normalizeSubsale);
+        return filterPublicListings<Record<string, any>>(data.subsale)
+          .map(normalizeSubsale);
       }
     }
   } catch (err) {
-    console.warn(
-      'Express subsale route failed, attempting direct fetch:',
-      err
-    );
-  }
-
-  // Fallback to direct Google Apps Script
-  try {
-    const directRes = await fetch(
-      `${APPS_SCRIPT_URL}?action=subsale`
-    );
-
-    if (directRes.ok) {
-      const data = await directRes.json();
-
-      if (
-        data.success &&
-        Array.isArray(data.subsale)
-      ) {
-        return data.subsale.map(normalizeSubsale);
-      }
-    }
-  } catch (err) {
-    console.error(
-      'Direct subsale fetch failed:',
-      err
-    );
+    console.error('Subsale API fetch failed:', err);
   }
 
   return [];
