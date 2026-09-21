@@ -1,8 +1,9 @@
-import React from 'react';
-import { MapPin, ArrowRight } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { MapPin, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { POPULAR_AREAS } from '../data/placeholders';
 import { Project } from '../types';
 import { SafeImage } from './SafeImage';
+import { normalizeArea } from '../services/propertyPresentation';
 
 interface PopularAreasProps {
   projects: Project[];
@@ -10,11 +11,37 @@ interface PopularAreasProps {
 }
 
 export const PopularAreas: React.FC<PopularAreasProps> = ({ projects, onSelectArea }) => {
-  
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const updateScrollButtons = () => {
+      const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+      setCanScrollLeft(carousel.scrollLeft > 1);
+      setCanScrollRight(carousel.scrollLeft < maxScrollLeft - 1);
+    };
+
+    updateScrollButtons();
+    carousel.addEventListener('scroll', updateScrollButtons, { passive: true });
+    const observer = new ResizeObserver(updateScrollButtons);
+    observer.observe(carousel);
+
+    return () => {
+      carousel.removeEventListener('scroll', updateScrollButtons);
+      observer.disconnect();
+    };
+  }, [projects]);
+
   // Calculate project count per area dynamically from real API projects
   const getCountForArea = (areaName: string) => {
-    const normName = areaName.toLowerCase();
-    return projects.filter((p) => (p.AREA || '').toLowerCase().includes(normName)).length;
+    const normalizedName = normalizeArea(areaName).toLowerCase();
+    return projects.filter((project) =>
+      normalizeArea(project.AREA).toLowerCase().includes(normalizedName)
+    ).length;
   };
 
   return (
@@ -25,20 +52,21 @@ export const PopularAreas: React.FC<PopularAreasProps> = ({ projects, onSelectAr
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div>
             <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block mb-1">
-              Kawasan Tumpuan Utama
+              CARI IKUT LOKASI
             </span>
             <h2 className="text-2xl sm:text-4xl font-serif font-bold text-white">
-              Popular Areas in Klang Valley
+              Di Mana Rumah Pilihan Anda?
             </h2>
           </div>
 
           <p className="text-sm text-slate-400 max-w-md">
-            Explore homes in top townships with excellent connectivity, amenities, and lifestyle convenience.
+            Terokai rumah yang tersedia mengikut kawasan dan cari lokasi yang sesuai dengan keperluan anda.
           </p>
         </div>
 
-        {/* Areas Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="relative">
+        {/* Areas Cards Carousel */}
+        <div ref={carouselRef} className="flex gap-5 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth px-12 pb-4 touch-pan-x overscroll-x-contain [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none' }}>
           {POPULAR_AREAS.map((area) => {
             const count = getCountForArea(area.name);
 
@@ -46,7 +74,7 @@ export const PopularAreas: React.FC<PopularAreasProps> = ({ projects, onSelectAr
               <button
                 key={area.name}
                 onClick={() => onSelectArea(area.name)}
-                className="group relative h-64 rounded-2xl overflow-hidden border border-slate-800 text-left shadow-lg hover:shadow-2xl hover:border-amber-500/50 transition-all duration-300 transform active:scale-98"
+                className="group relative shrink-0 w-[88%] sm:w-[48%] lg:w-[31%] snap-start h-64 rounded-2xl overflow-hidden border border-slate-800 text-left shadow-lg hover:shadow-2xl hover:border-amber-500/50 transition-all duration-300 transform active:scale-98"
               >
                 {/* Background Image */}
                 <SafeImage
@@ -84,6 +112,10 @@ export const PopularAreas: React.FC<PopularAreasProps> = ({ projects, onSelectAr
               </button>
             );
           })}
+        </div>
+
+        {canScrollLeft && <button type="button" onClick={() => carouselRef.current?.scrollBy({ left: -carouselRef.current.clientWidth * 0.85, behavior: 'smooth' })} className="absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-white shadow-lg transition-colors hover:border-amber-500/50 hover:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400 sm:h-11 sm:w-11" aria-label="Previous area"><ChevronLeft className="h-5 w-5" /></button>}
+        {canScrollRight && <button type="button" onClick={() => carouselRef.current?.scrollBy({ left: carouselRef.current.clientWidth * 0.85, behavior: 'smooth' })} className="absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-white shadow-lg transition-colors hover:border-amber-500/50 hover:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400 sm:h-11 sm:w-11" aria-label="Next area"><ChevronRight className="h-5 w-5" /></button>}
         </div>
 
       </div>

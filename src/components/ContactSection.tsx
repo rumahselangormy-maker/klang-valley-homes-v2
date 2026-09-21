@@ -19,32 +19,32 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenEligibilit
             
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold">
               <MessageSquare className="w-4 h-4" />
-              <span>Sokongan & Pertanyaan</span>
+              <span>PERLUKAN BANTUAN?</span>
             </div>
 
             <h2 className="text-3xl sm:text-5xl font-serif font-bold text-white">
-              Need help choosing a property?
+              Masih Tak Pasti Rumah Mana Yang Sesuai?
             </h2>
 
             <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              Our team can help you explore suitable property options based on your preferred location, budget and eligibility.
+              Beritahu kami apa yang anda cari. Kami bantu cadangkan pilihan rumah berdasarkan lokasi, harga dan kelayakan anda.
             </p>
 
             {/* Quick Contact Options */}
             <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto text-left">
               <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-                <span className="text-xs text-amber-400 font-bold uppercase block">Kawasan Liputan</span>
-                <p className="text-sm font-semibold text-white">Seluruh Klang Valley & Selangor</p>
+                <span className="text-xs text-amber-400 font-bold uppercase block">LOKASI</span>
+                <p className="text-sm font-semibold text-white">Klang Valley & Selangor</p>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-                <span className="text-xs text-amber-400 font-bold uppercase block">Masa Respons</span>
-                <p className="text-sm font-semibold text-white">Dalam Masa 24 Jam</p>
+                <span className="text-xs text-amber-400 font-bold uppercase block">TEMPOH MAKLUM BALAS</span>
+                <p className="text-sm font-semibold text-white">Dalam 24 jam</p>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-                <span className="text-xs text-amber-400 font-bold uppercase block">Yuran Perkhidmatan</span>
-                <p className="text-sm font-semibold text-white">100% PERCUMA</p>
+                <span className="text-xs text-amber-400 font-bold uppercase block">KHIDMAT KAMI</span>
+                <p className="text-sm font-semibold text-white">Percuma</p>
               </div>
             </div>
 
@@ -54,7 +54,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenEligibilit
                 className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-base shadow-xl shadow-amber-500/20 transition-all flex items-center justify-center gap-2"
               >
                 <CheckCircle2 className="w-5 h-5" />
-                <span>Hubungi Kami / Semak Kelayakan</span>
+                <span>Bantu Saya Cari Rumah →</span>
               </button>
             </div>
 

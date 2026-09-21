@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Project, FilterState, ActiveTab } from './types';
 import { fetchProjects } from './services/api';
 import {
@@ -27,6 +27,7 @@ import {
   Loader2,
   RefreshCw,
   AlertCircle,
+  CheckCircle2,
 } from 'lucide-react';
 
 export default function App() {
@@ -55,6 +56,8 @@ export default function App() {
 
   const [fetchError, setFetchError] =
     useState<string | null>(null);
+
+  const featuredCarouselRef = useRef<HTMLDivElement>(null);
 
   // Selected project modal state
   const [selectedProject, setSelectedProject] =
@@ -522,11 +525,11 @@ export default function App() {
 
                   <div>
                     <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block mb-1">
-                      Pilihan Projek Teratas
+                      MUNGKIN RUMAH ANDA ADA DI SINI
                     </span>
 
                     <h2 className="text-2xl sm:text-4xl font-serif font-bold text-white">
-                      Featured Properties & Projects
+                      Hartanah & Projek Pilihan
                     </h2>
                   </div>
 
@@ -539,9 +542,7 @@ export default function App() {
                     className="text-xs sm:text-sm font-bold text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1"
                   >
                     <span>
-                      Lihat Semua (
-                      {projects.length}
-                      ) Projek
+                      Lihat Semua Projek
                     </span>
 
                     <span>→</span>
@@ -607,8 +608,9 @@ export default function App() {
                     <div className="relative">
 
                       <div
+                        ref={featuredCarouselRef}
                         id="featured-projects-carousel"
-                        className="flex flex-nowrap gap-5 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth pb-4 touch-pan-x overscroll-x-contain [&::-webkit-scrollbar]:hidden"
+                        className="flex flex-nowrap gap-5 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth px-12 pb-4 touch-pan-x overscroll-x-contain [&::-webkit-scrollbar]:hidden"
                         style={{
                           scrollbarWidth:
                             'none',
@@ -642,49 +644,25 @@ export default function App() {
                       </div>
 
                       {/* Arrows */}
-                      {projects.length >
-                        1 && (
-                        <div className="hidden sm:flex justify-end gap-2 mt-4">
-
+                      {projects.length > 1 && (
+                        <>
                           <button
                             type="button"
-                            onClick={() => {
-                              document
-                                .getElementById(
-                                  'featured-projects-carousel'
-                                )
-                                ?.scrollBy({
-                                  left: -420,
-                                  behavior:
-                                    'smooth',
-                                });
-                            }}
-                            className="w-10 h-10 rounded-full border border-slate-700 bg-slate-900 text-slate-300 hover:text-amber-400 hover:border-amber-500/50 transition-colors flex items-center justify-center"
+                            onClick={() => featuredCarouselRef.current?.scrollBy({ left: -featuredCarouselRef.current.clientWidth * 0.85, behavior: 'smooth' })}
+                            className="absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-white shadow-lg transition-colors hover:border-amber-500/50 hover:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400 sm:h-11 sm:w-11"
                             aria-label="Previous featured property"
                           >
-                            ←
+                            ‹
                           </button>
-
                           <button
                             type="button"
-                            onClick={() => {
-                              document
-                                .getElementById(
-                                  'featured-projects-carousel'
-                                )
-                                ?.scrollBy({
-                                  left: 420,
-                                  behavior:
-                                    'smooth',
-                                });
-                            }}
-                            className="w-10 h-10 rounded-full border border-slate-700 bg-slate-900 text-slate-300 hover:text-amber-400 hover:border-amber-500/50 transition-colors flex items-center justify-center"
+                            onClick={() => featuredCarouselRef.current?.scrollBy({ left: featuredCarouselRef.current.clientWidth * 0.85, behavior: 'smooth' })}
+                            className="absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-white shadow-lg transition-colors hover:border-amber-500/50 hover:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400 sm:h-11 sm:w-11"
                             aria-label="Next featured property"
                           >
-                            →
+                            ›
                           </button>
-
-                        </div>
+                        </>
                       )}
 
                       {/* Mobile Hint */}
@@ -692,7 +670,7 @@ export default function App() {
                         1 && (
                         <div className="sm:hidden flex items-center justify-center gap-2 mt-3 text-xs text-slate-500">
                           <span>
-                            Swipe untuk lihat projek lain
+                            Lihat projek lain
                           </span>
 
                           <span className="text-amber-400">
@@ -706,34 +684,40 @@ export default function App() {
               </div>
             </section>
 
-            {/* 3. POPULAR AREAS */}
-            <PopularAreas
-              projects={projects}
-              onSelectArea={
-                handleSelectArea
-              }
-            />
-
-            {/* 4. SUBSALE */}
+            {/* 3. SUBSALE */}
             <SubsaleSection
               onOpenEligibility={
                 handleOpenEligibility
               }
             />
 
-            {/* 5. LOAN CALCULATOR */}
+            {/* 4. LOAN CALCULATOR */}
             <CalculatorSection
               onOpenEligibility={
                 handleOpenEligibility
               }
             />
 
-            {/* 6. 3-STEP PROCESS */}
-            <ProcessSteps
-              onOpenEligibility={
-                handleOpenEligibility
-              }
-            />
+            {/* 5. 3-STEP PROCESS */}
+            <section className="pt-20 bg-slate-950 border-b border-slate-800">
+              <div className="text-center max-w-2xl mx-auto px-4 space-y-3 mb-16">
+                <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block">MUDAHKAN CARIAN RUMAH ANDA</span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white">3 Langkah Untuk Cari Rumah Anda</h2>
+                <p className="text-slate-400 text-sm">Kami mudahkan proses anda daripada mencari rumah yang sesuai hingga ke langkah seterusnya.</p>
+              </div>
+              <div className="[&>section]:py-0 [&>section]:border-0 [&>section>div>div:first-child]:hidden [&>section>div>div:last-child]:hidden">
+                <ProcessSteps onOpenEligibility={handleOpenEligibility} />
+              </div>
+              <div className="pb-20 text-center">
+                <button id="eligibility-process" data-cta="semak-kelayakan" onClick={() => handleOpenEligibility()} className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-base shadow-xl shadow-amber-500/20 transition-all transform active:scale-98">
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span>Semak Kelayakan Saya</span>
+                </button>
+              </div>
+            </section>
+
+            {/* 6. AREAS */}
+            <PopularAreas projects={projects} onSelectArea={handleSelectArea} />
 
             {/* 7. CONTACT */}
             <ContactSection
