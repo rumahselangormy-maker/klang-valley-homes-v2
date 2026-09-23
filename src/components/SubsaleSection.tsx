@@ -195,11 +195,11 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
             <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block">
-              Rumah Sedia Ada
+              SUBSALE DI SEKITAR ANDA
             </span>
 
             <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white">
-              Subsale Properties
+              Rumah Subsale Untuk Dijual
             </h2>
 
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
@@ -251,15 +251,15 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                 "
               >
                 <Home className="w-3.5 h-3.5" />
-                <span>Perkhidmatan Subsale</span>
+                <span>BANTUAN SUBSALE</span>
               </div>
 
               <h3 className="text-xl sm:text-2xl font-serif font-bold text-white">
-                Khidmat Ejen Subsale Professional
+                Bantuan Membeli & Menjual Rumah Subsale
               </h3>
 
               <p className="text-sm text-slate-300 leading-relaxed max-w-4xl">
-                Klang Valley Homes membantu pelanggan yang mencari atau ingin
+                RumahSelangor.my membantu pelanggan yang mencari atau ingin
                 menjual hartanah subsale (rumah terpakai / sedia ada).
                 <strong>
                   {' '}Perkhidmatan subsale kami tertumpu bagi kawasan dalam
@@ -294,7 +294,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                   <div className="flex items-center justify-between gap-4 mb-5">
                     <div>
                       <h4 className="text-lg sm:text-xl font-serif font-bold text-white">
-                        Subsale Properties Available
+                        Rumah Subsale Tersedia
                       </h4>
 
                       <p className="text-xs sm:text-sm text-slate-400 mt-1">
@@ -558,7 +558,7 @@ export const SubsaleSection: React.FC<SubsaleSectionProps> = ({
                                 gap-2
                               "
                             >
-                              <span>View Details</span>
+                              <span>Lihat Butiran</span>
                               <ArrowRight className="w-4 h-4" />
                             </button>
 

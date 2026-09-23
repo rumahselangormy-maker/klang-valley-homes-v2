@@ -14,27 +14,27 @@ export const WhyChooseUs: React.FC<WhyChooseUsProps> = () => {
   const features = [
     {
       icon: Database,
-      title: 'Pangkalan Data Projek Terkini',
+      title: 'Pasukan Perunding Hartanah Berdaftar',
       description:
-        'Info projek hartanah terkini di Klang Valley dan memastikan maklumat dan status harga sentiasa dikemaskini.',
+        'Anda akan dibantu oleh perunding hartanah berdaftar dengan LPPEH, dengan maklumat projek dan harga yang sentiasa kami semak dan kemas kini.',
     },
     {
       icon: FileCheck2,
-      title: 'Semakan Kelayakan Percuma',
+      title: 'Semak Kemampuan Sebelum Cari Rumah',
       description:
-        'Ketahui kemampuan pinjaman perumahan anda terlebih dahulu secara PERCUMA tanpa sebarang komitmen kewangan.',
+        'Tak pasti rumah dalam bajet berapa? Kami bantu buat semakan awal supaya anda lebih mudah fokus pada rumah yang sesuai dengan kemampuan.',
     },
     {
       icon: Building2,
-      title: 'Liputan Luas Klang Valley',
+      title: 'Ada Agent Untuk Bantu Anda',
       description:
-        'Liputan projek utama merangkumi Shah Alam, Klang, Puncak Alam, Puchong, Jenjarom, Pulau Indah, Subang, & Petaling Jaya.',
+        'Jumpa rumah yang anda minat atau masih tak pasti nak pilih yang mana? Agent kami boleh bantu jawab pertanyaan, terangkan pilihan yang ada dan bantu anda sepanjang proses.',
     },
     {
       icon: UserCheck,
-      title: 'Bantuan Pasukan Profesional',
+      title: 'Cari Rumah Ikut Keperluan Anda',
       description:
-        'Pasukan perunding kami bersedia membantu anda memilih projek bersesuaian dengan lokasi, jenis hartanah dan bajet bulanan.',
+        'Beritahu kami lokasi pilihan, jenis rumah dan bajet anda. Kami akan bantu cari dan cadangkan pilihan yang lebih sesuai dengan apa yang anda perlukan.',
     },
   ];
 
@@ -49,12 +49,11 @@ export const WhyChooseUs: React.FC<WhyChooseUsProps> = () => {
           </span>
 
           <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white">
-            Why Choose Klang Valley Homes
+            Kenapa Pilih RumahSelangor.my
           </h2>
 
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Platform sehenti yang direka khas untuk memudahkan pembeli rumah pertama
-            mahupun pelabur mencari hartanah ideal di seluruh Lembah Klang.
+            Cari rumah tak semestinya kena pening. Di RumahSelangor.my, anda boleh tengok pilihan rumah, semak kemampuan dan dapatkan bantuan daripada perunding hartanah kami bila diperlukan.
           </p>
         </div>
 

@@ -56,7 +56,7 @@ export const Footer: React.FC<FooterProps> = () => {
               </a>
 
               <a
-                href="https://www.instagram.com/klang_valley_homes?igsh=d3liZzZ2M2JrcXp6&utm_source=qr"
+                href="https://www.instagram.com/ryna.rumahselangor.my"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"

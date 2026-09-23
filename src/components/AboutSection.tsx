@@ -17,19 +17,19 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenEligibility })
             
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold">
               <Building2 className="w-4 h-4" />
-              <span>Tentang Klang Valley Homes</span>
+              <span>Tentang RumahSelangor.my</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white leading-tight">
-              Platform Hartanah Pilihan Di Klang Valley
+              Cari Rumah di Selangor Jadi Lebih Mudah
             </h2>
 
             <p className="text-slate-300 text-base leading-relaxed">
-              Klang Valley Homes is a property platform designed to make it easier for buyers and property seekers to discover suitable homes and projects around Klang Valley.
+              RumahSelangor.my bantu anda cari rumah yang sesuai ikut lokasi, bajet dan kemampuan anda.
             </p>
 
             <p className="text-slate-300 text-base leading-relaxed">
-              Our team will assist you throughout the property enquiry process.
+              Tak pasti rumah mana sesuai atau layak beli pada harga berapa? Kami boleh bantu semak dulu sebelum anda buat keputusan.
             </p>
 
             {/* Core Commitments */}
@@ -37,21 +37,21 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenEligibility })
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <span className="text-sm text-slate-300">
-                  <strong>Maklumat Telus & Sah:</strong> Pangkalan data terhubung terus ke senarai projek perumahan terkini.
+                  <strong>Pilihan Rumah Yang Mudah Dicari</strong><br />Lihat pilihan rumah mengikut kawasan, harga dan jenis rumah yang anda cari.
                 </span>
               </div>
 
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <span className="text-sm text-slate-300">
-                  <strong>Khidmat Nasihat Mesra Pembeli:</strong> Semakan kelayakan pinjaman percuma sebelum membuat tempahan.
+                  <strong>Semak Kelayakan Dulu</strong><br />Belum tahu bajet rumah yang sesuai? Buat semakan kelayakan percuma supaya anda tahu anggaran kemampuan sebelum memilih rumah.
                 </span>
               </div>
 
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <span className="text-sm text-slate-300">
-                  <strong>Bantuan Lengkap:</strong> Daripada pemilihan lokasi sehingga urusan pengesahan kelayakan bank.
+                  <strong>Kami Bantu Sampai Jelas</strong><br />Dari cari rumah, tanya tentang projek, semak kelayakan hingga langkah seterusnya — kami bantu anda sepanjang proses.
                 </span>
               </div>
             </div>
@@ -68,27 +68,32 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenEligibility })
 
           </div>
 
-          {/* Right Column Visual Graphic Card */}
+          {/* Existing property placeholder; real Ryna image pending. */}
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-900">
               <img
                 src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80"
-                alt="Klang Valley Homes Team & Properties"
+                alt="Ilustrasi hartanah — gambar sebenar Ryna akan ditambah kemudian"
                 className="w-full h-80 sm:h-96 object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
-              <div className="absolute bottom-6 left-6 right-6 p-5 rounded-xl bg-slate-950/90 border border-slate-800 backdrop-blur-md">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-                    <Users className="w-6 h-6" />
+              <div className="absolute bottom-2 left-2 right-2 p-2.5 sm:bottom-3 sm:left-3 sm:right-3 sm:p-3 rounded-xl bg-slate-950/90 border border-slate-800 backdrop-blur-md">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                    <Users className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div>
-                    <h4 className="font-serif font-bold text-white text-base">Bantuan Pasukan Klang Valley Homes</h4>
-                    <p className="text-xs text-slate-300">Bersedia membimbing permohonan & pilihan rumah anda</p>
+                    <p className="text-[10px] sm:text-xs text-amber-400">Ada Soalan Tentang Rumah?</p>
+                    <h4 className="font-serif font-bold text-white text-xs sm:text-sm">Bantuan Perunding Hartanah Berdaftar</h4>
+                    <p className="text-[10px] sm:text-xs text-slate-300">Bantu anda cari rumah yang sesuai &amp; semak kelayakan.</p>
                   </div>
                 </div>
               </div>
+            </div>
+            <div className="mt-4 space-y-1">
+              <h3 className="font-serif text-xl font-bold text-white">Ryna Arif</h3>
+              <p className="text-sm text-amber-400">REN 62310 · Perunding Hartanah Berdaftar</p>
             </div>
           </div>
 

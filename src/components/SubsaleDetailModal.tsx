@@ -426,41 +426,6 @@ export const SubsaleDetailModal: React.FC<
                 </div>
               )}
 
-              {/* Price */}
-
-              <div
-                className="
-                  absolute inset-x-0 bottom-0
-                  p-3 sm:p-5
-                  bg-gradient-to-t
-                  from-slate-950/90
-                  to-transparent
-                  pointer-events-none
-                "
-              >
-                <span
-                  className="
-                    text-[10px] sm:text-xs
-                    text-amber-300
-                    font-semibold
-                    block
-                  "
-                >
-                  Harga
-                </span>
-
-                <span
-                  className="
-                    text-xl sm:text-3xl
-                    font-serif
-                    font-bold
-                    text-white
-                  "
-                >
-                  {formatRinggit(listing.PRICE)}
-                </span>
-              </div>
-
               {/* Status */}
 
               {(listing.LOT_STATUS || listing.STATUS) && (
@@ -860,7 +825,7 @@ export const SubsaleDetailModal: React.FC<
                   text-white
                 "
               >
-                Penerangan
+                Tentang Rumah Ini
               </h3>
 
               <p

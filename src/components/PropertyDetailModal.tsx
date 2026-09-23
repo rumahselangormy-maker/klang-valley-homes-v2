@@ -83,19 +83,12 @@ const [lightboxIndex, setLightboxIndex] = useState(0);
               /> : <div className="w-full h-full flex items-center justify-center text-slate-500 text-sm">Tiada gambar tersedia.</div>}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-30 sm:opacity-70 pointer-events-none" />
 
-              <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-4 sm:left-4 sm:right-4 flex items-end justify-between gap-2 z-10">
-                <div className="bg-transparent border-0 p-0 sm:bg-slate-950/85 sm:backdrop-blur-md sm:px-4 sm:py-2 sm:rounded-xl sm:border sm:border-slate-800/80">
-                  <span className="text-[10px] sm:text-xs text-amber-300 block font-semibold leading-tight drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.9)] sm:drop-shadow-none">Harga Bermula / Price From</span>
-                  <span className="text-base sm:text-2xl font-serif font-bold text-white leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] sm:drop-shadow-none">
-                    {formatRinggit(project.PRICE_FROM)}
-                  </span>
-                </div>
-
+              <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-4 sm:left-4 sm:right-4 flex items-end justify-end gap-2 z-10">
                 <div className="flex flex-wrap sm:flex-nowrap justify-end gap-1.5 sm:gap-2">
                   <span className="px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-md sm:rounded-lg bg-amber-500 text-slate-950 font-bold text-[10px] sm:text-xs uppercase whitespace-nowrap shadow-md">
-                    {project.LOT_STATUS || project.STATUS || 'AVAILABLE'}
+                    {project.LOT_STATUS || project.TENURE || project.STATUS || 'AVAILABLE'}
                   </span>
-                  {project.TENURE && (
+                  {project.TENURE && project.LOT_STATUS && (
                     <span className="px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-md sm:rounded-lg bg-slate-950/80 backdrop-blur-sm sm:bg-slate-900/90 text-slate-200 border border-slate-700/80 font-semibold text-[10px] sm:text-xs uppercase whitespace-nowrap shadow-md">
                       {project.TENURE}
                     </span>

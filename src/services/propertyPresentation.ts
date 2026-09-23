@@ -22,10 +22,28 @@ export function calculateMonthlyEstimate(value: string | number | null | undefin
   return Math.round((principal * monthlyRate * factor) / (factor - 1));
 }
 
+// Active CRM area IDs manually verified by the owner. Stored property data stays unchanged.
+const AREA_NAMES: Readonly<Record<string, string>> = {
+  SAH: 'Shah Alam', KLG: 'Klang', PAL: 'Puncak Alam', PCH: 'Puchong',
+  JER: 'Jenjarom', PI: 'Pulau Indah', TPG: 'Telok Panglima Garang', PJ: 'Petaling Jaya',
+};
+
 export function normalizeArea(value = ''): string {
   const area = value.trim().replace(/\s+/g, ' ');
-  if (/^(SAH|SHAH ALAM)$/i.test(area)) return 'Shah Alam';
+  if (Object.prototype.hasOwnProperty.call(AREA_NAMES, area.toUpperCase())) {
+    return AREA_NAMES[area.toUpperCase()];
+  }
   return area.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+export function matchesArea(source = '', selected = ''): boolean {
+  const area = normalizeArea(source).toLowerCase();
+  const filter = normalizeArea(selected).toLowerCase();
+  return !filter || (!!area && area.includes(filter));
+}
+
+export function getAreaOptions(values: readonly string[]): string[] {
+  return Array.from(new Set(values.map(normalizeArea).filter(Boolean))).sort();
 }
 
 export function getPropertySizeDisplay(propertyType = '', builtUp = '', landSize = '') {

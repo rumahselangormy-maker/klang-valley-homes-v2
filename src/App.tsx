@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Project, FilterState, ActiveTab } from './types';
 import { fetchProjects } from './services/api';
+import { getAreaOptions, matchesArea, normalizeArea } from './services/propertyPresentation';
 import {
   createPublicListingSlug,
   findPublicListingBySlug,
@@ -168,7 +169,7 @@ export default function App() {
       if (selectedArea) {
         setFilters((prev) => ({
           ...prev,
-          area: selectedArea,
+          area: normalizeArea(selectedArea),
         }));
       }
     }
@@ -187,18 +188,7 @@ export default function App() {
       'PETALING JAYA',
     ];
 
-    const areas =
-      new Set<string>(PRIMARY_AREAS);
-
-    projects.forEach((p) => {
-      if (p.AREA && p.AREA.trim()) {
-        areas.add(
-          p.AREA.trim().toUpperCase()
-        );
-      }
-    });
-
-    return Array.from(areas).sort();
+    return getAreaOptions([...PRIMARY_AREAS, ...projects.map((p) => p.AREA)]);
   }, [projects]);
 
   // Available project names
@@ -236,7 +226,7 @@ export default function App() {
               .includes(query);
 
           const matchArea =
-            (p.AREA || '')
+            normalizeArea(p.AREA)
               .toLowerCase()
               .includes(query);
 
@@ -261,23 +251,8 @@ export default function App() {
         }
 
         // Area
-        if (filters.area) {
-          const filterAreaNorm =
-            filters.area.toUpperCase();
-
-          const projectAreaNorm =
-            (p.AREA || '').toUpperCase();
-
-          if (
-            !projectAreaNorm.includes(
-              filterAreaNorm
-            ) &&
-            !filterAreaNorm.includes(
-              projectAreaNorm
-            )
-          ) {
-            return false;
-          }
+        if (!matchesArea(p.AREA, filters.area)) {
+          return false;
         }
 
         // Property Type
@@ -443,7 +418,7 @@ export default function App() {
   ) => {
     setFilters((prev) => ({
       ...prev,
-      area: areaName.toUpperCase(),
+      area: normalizeArea(areaName),
     }));
 
     setActiveTab('properties');

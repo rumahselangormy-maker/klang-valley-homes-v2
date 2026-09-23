@@ -5,6 +5,8 @@ import {
   formatRinggit,
   getPropertySizeDisplay,
   normalizeArea,
+  matchesArea,
+  getAreaOptions,
 } from './propertyPresentation';
 
 test('formats property prices with RM and thousands separators', () => {
@@ -26,4 +28,45 @@ test('normalizes area aliases and chooses the relevant property size', () => {
   assert.deepEqual(getPropertySizeDisplay('Double Storey Terrace', '1802', '1650'), {
     label: 'Luas Tanah', value: '1650',
   });
+});
+
+const verifiedAreas = [
+  ['SAH', 'Shah Alam'], ['PAL', 'Puncak Alam'], ['KLG', 'Klang'], ['PCH', 'Puchong'],
+  ['JER', 'Jenjarom'], ['PI', 'Pulau Indah'], ['TPG', 'Telok Panglima Garang'], ['PJ', 'Petaling Jaya'],
+];
+
+for (const [id, name] of verifiedAreas) {
+  test('normalizes and matches verified area ' + id, () => {
+    assert.equal(normalizeArea(id), name);
+    assert.equal(normalizeArea('  ' + id.toLowerCase() + '  '), name);
+    assert.equal(normalizeArea(name.toUpperCase()), name);
+    assert.equal(matchesArea(id, name), true);
+    assert.equal(matchesArea(name, id), true);
+    assert.equal(matchesArea(name.toUpperCase(), name), true);
+  });
+}
+
+test('deduplicates area dropdown names and IDs without changing input records', () => {
+  const values = verifiedAreas.flatMap(([id, name]) => [id, name, name.toUpperCase()]);
+  const original = [...values];
+  assert.deepEqual(getAreaOptions([...values, '', '  ']), verifiedAreas.map(([, name]) => name).sort());
+  assert.deepEqual(values, original);
+});
+
+test('keeps unknown and free-text areas usable without admitting unrelated matches', () => {
+  assert.equal(normalizeArea('  bandar   baru  '), 'Bandar Baru');
+  assert.equal(normalizeArea('XYZ'), 'Xyz');
+  assert.equal(matchesArea('Bandar Baru', 'bandar baru'), true);
+  assert.equal(matchesArea('XYZ', 'xyz'), true);
+  assert.equal(matchesArea('XYZ', ''), true);
+  assert.equal(matchesArea('', ''), true);
+  assert.equal(matchesArea('', 'Shah Alam'), false);
+  assert.equal(matchesArea('PAL', 'Shah Alam'), false);
+  assert.deepEqual(getAreaOptions(['XYZ', 'xyz', 'Bandar Baru']), ['Bandar Baru', 'Xyz']);
+});
+
+test('counts supplied public inventory consistently with area filtering', () => {
+  const areas = ['SAH', 'PAL', 'SAH'];
+  assert.equal(areas.filter(area => matchesArea(area, 'Shah Alam')).length, 2);
+  assert.equal(areas.filter(area => matchesArea(area, 'Puncak Alam')).length, 1);
 });

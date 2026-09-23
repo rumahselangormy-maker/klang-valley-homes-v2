@@ -39,11 +39,11 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 z-10">
           {/* Status Badge */}
           <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-950/80 text-amber-400 border border-amber-500/30 backdrop-blur-md">
-            {project.LOT_STATUS || project.STATUS || 'AVAILABLE'}
+            {project.LOT_STATUS || project.TENURE || project.STATUS || 'AVAILABLE'}
           </span>
 
           {/* Tenure Badge */}
-          {project.TENURE && (
+          {project.TENURE && project.LOT_STATUS && (
             <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase bg-slate-900/90 text-slate-300 border border-slate-700/60 backdrop-blur-md">
               {project.TENURE}
             </span>
@@ -52,7 +52,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
         {/* Price Tag Overlay at Bottom of Image */}
         <div className="absolute bottom-3 left-3 right-3 z-10">
-          <span className="text-xs text-amber-300/90 font-medium block">Price From / Harga Bermula</span>
+          <span className="text-xs text-amber-300/90 font-medium block">Harga Bermula</span>
           <span className="text-xl sm:text-2xl font-serif font-bold text-white tracking-tight">
             {formatRinggit(project.PRICE_FROM)}
           </span>
@@ -117,7 +117,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             onClick={() => onViewDetails(project)}
             className="w-full py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold text-xs border border-slate-700/70 transition-all flex items-center justify-center gap-1"
           >
-            <span>View Details</span>
+            <span>Lihat Butiran</span>
             <ChevronRight className="w-3.5 h-3.5 text-amber-400" />
           </button>
 
@@ -126,7 +126,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             className="w-full py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/10 transition-all flex items-center justify-center gap-1"
           >
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Enquire Now</span>
+            <span>Tanya Sekarang</span>
           </button>
         </div>
 

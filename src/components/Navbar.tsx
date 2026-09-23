@@ -123,7 +123,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }}
               className="sm:hidden px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-semibold text-xs flex items-center gap-1"
             >
-              <span>Kelayakan</span>
+              <span>Semak Kelayakan</span>
             </button>
 
             <button

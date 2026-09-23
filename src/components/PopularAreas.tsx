@@ -3,7 +3,7 @@ import { MapPin, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { POPULAR_AREAS } from '../data/placeholders';
 import { Project } from '../types';
 import { SafeImage } from './SafeImage';
-import { normalizeArea } from '../services/propertyPresentation';
+import { matchesArea } from '../services/propertyPresentation';
 
 interface PopularAreasProps {
   projects: Project[];
@@ -38,9 +38,8 @@ export const PopularAreas: React.FC<PopularAreasProps> = ({ projects, onSelectAr
 
   // Calculate project count per area dynamically from real API projects
   const getCountForArea = (areaName: string) => {
-    const normalizedName = normalizeArea(areaName).toLowerCase();
     return projects.filter((project) =>
-      normalizeArea(project.AREA).toLowerCase().includes(normalizedName)
+      matchesArea(project.AREA, areaName)
     ).length;
   };
 
@@ -90,7 +89,7 @@ export const PopularAreas: React.FC<PopularAreasProps> = ({ projects, onSelectAr
                 <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
                   <div className="flex justify-between items-start">
                     <span className="px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-amber-400 border border-amber-500/30 text-xs font-bold uppercase tracking-wider">
-                      {count > 0 ? `${count} Projek Tersedia` : 'Teroka Kawasan'}
+                      {count} PROJEK TERSEDIA
                     </span>
                   </div>
 
