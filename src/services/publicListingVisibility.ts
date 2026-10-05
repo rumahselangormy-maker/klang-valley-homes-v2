@@ -1,5 +1,6 @@
 export interface ListingWithStatus {
   STATUS?: unknown;
+  PUBLIC_VISIBILITY?: unknown;
 }
 
 const PUBLIC_LISTING_STATUS = 'available';
@@ -15,7 +16,9 @@ export function isPublicListing(
     return false;
   }
 
-  return listing.STATUS.trim().toLowerCase() === PUBLIC_LISTING_STATUS;
+  const visibility = listing.PUBLIC_VISIBILITY;
+  return listing.STATUS.trim().toLowerCase() === PUBLIC_LISTING_STATUS &&
+    (visibility === undefined || visibility === 'Published');
 }
 
 export function filterPublicListings<T extends ListingWithStatus>(

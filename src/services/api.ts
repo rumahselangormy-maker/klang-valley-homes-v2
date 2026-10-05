@@ -2,6 +2,7 @@ import { Project, LeadFormData } from '../types';
 import { filterPublicListings } from './publicListingVisibility';
 
 export interface SubsaleListing {
+  PUBLIC_VISIBILITY?: unknown;
   ID: string;
   PROPERTY_NAME: string;
   AREA: string;
@@ -33,6 +34,7 @@ const APPS_SCRIPT_URL =
  */
 export function normalizeProject(raw: Record<string, any>): Project {
   return {
+    PUBLIC_VISIBILITY: raw.PUBLIC_VISIBILITY,
     ID: String(raw.ID || raw.id || ''),
     AREA: String(raw.AREA || raw.area || raw['Area'] || ''),
     PROJECT_NAME: String(
@@ -229,6 +231,7 @@ export function normalizeSubsale(
   raw: Record<string, any>
 ): SubsaleListing {
   return {
+    PUBLIC_VISIBILITY: raw.PUBLIC_VISIBILITY,
     ID: String(
       raw.ID ||
         raw.id ||

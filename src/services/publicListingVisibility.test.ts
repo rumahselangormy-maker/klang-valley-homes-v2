@@ -17,6 +17,29 @@ import {
 
 const originalFetch = globalThis.fetch;
 
+test('independent visibility preserves legacy defaults and never overrides business status', () => {
+  for (const status of ['Available', 'Booked', 'Reserved', 'Sold', 'Off Market']) {
+    for (const visibility of [undefined, 'Published', 'Hidden', '', null, 'invalid']) {
+      const row = { STATUS: status, PUBLIC_VISIBILITY: visibility };
+      assert.equal(isPublicListing(row), status === 'Available' && (visibility === undefined || visibility === 'Published'));
+      assert.equal(row.STATUS, status);
+    }
+  }
+});
+
+test('normalization, API filtering and direct links preserve Hidden for both property sources', () => {
+  const project = normalizeProject({ ID: 'P1', PROJECT_NAME: 'Hidden project', STATUS: 'Available', PUBLIC_VISIBILITY: 'Hidden' });
+  const subsale = normalizeSubsale({ ID: 'S1', PROPERTY_NAME: 'Hidden subsale', STATUS: 'Available', PUBLIC_VISIBILITY: 'Hidden' });
+  assert.equal(project.PUBLIC_VISIBILITY, 'Hidden');
+  assert.equal(subsale.PUBLIC_VISIBILITY, 'Hidden');
+  assert.equal(findPublicListingBySlug([project], 'hidden-project', row => row.PROJECT_NAME), undefined);
+  assert.equal(findPublicListingBySlug([subsale], 'hidden-subsale', row => row.PROPERTY_NAME), undefined);
+  for (const collection of ['projects', 'subsale'] as const) {
+    const response = createPublicListingResponse({ success: true, [collection]: [project, subsale] }, collection);
+    assert.equal(response.count, 0);
+  }
+});
+
 test.afterEach(() => {
   globalThis.fetch = originalFetch;
 });

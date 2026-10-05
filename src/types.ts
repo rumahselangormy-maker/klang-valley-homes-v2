@@ -1,4 +1,5 @@
 export interface Project {
+  PUBLIC_VISIBILITY?: unknown;
   ID: string;
   AREA: string;
   PROJECT_NAME: string;
