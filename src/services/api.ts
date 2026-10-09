@@ -1,6 +1,7 @@
 import { Project, LeadFormData } from '../types';
 import { filterPublicListings } from './publicListingVisibility';
 import { normalizeArea } from './propertyPresentation';
+import { confirmedLeadId, validateLead, UNCERTAIN_LEAD_MESSAGE, type LeadSubmissionResult } from './leadSubmission';
 
 export interface SubsaleListing {
   PUBLIC_VISIBILITY?: unknown;
@@ -413,12 +414,9 @@ export async function fetchSubsale(): Promise<
 /**
  * Submit lead form to Google Apps Script API.
  */
-export async function submitLead(
-  formData: LeadFormData
-): Promise<{
-  success: boolean;
-  message?: string;
-}> {
+export async function submitLead(formData: LeadFormData): Promise<LeadSubmissionResult> {
+  const error = validateLead(formData);
+  if (error) return { success: false, outcome: 'rejected', message: error };
   const payload = {
     leadType: formData.leadType,
     name: formData.name,
@@ -441,75 +439,16 @@ export async function submitLead(
   };
 
   try {
-    // Attempt via Express proxy first
     const response = await fetch('/api/lead', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload), signal: AbortSignal.timeout(35000),
     });
-
-    if (response.ok) {
-      const resData = await response.json();
-
-      return {
-        success: resData.success ?? true,
-        message:
-          resData.message ||
-          'Berjaya dihantar',
-      };
+    const data = await response.json();
+    const leadId = confirmedLeadId(data);
+    if (response.ok && leadId) return { success: true, outcome: 'confirmed', leadId };
+    if (response.status === 400 && data?.success === false && data?.outcome === 'rejected') {
+      return { success: false, outcome: 'rejected', message: 'Sila semak maklumat wajib dan persetujuan anda.' };
     }
-  } catch (err) {
-    console.warn(
-      'Express lead submit failed, trying direct post:',
-      err
-    );
-  }
-
-  // Fallback to direct fetch using text/plain
-  // to avoid CORS preflight blocking in Apps Script
-  try {
-    const directRes = await fetch(
-      APPS_SCRIPT_URL,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type':
-            'text/plain;charset=utf-8',
-        },
-        body: JSON.stringify(payload),
-      }
-    );
-
-    if (directRes.ok) {
-      const text = await directRes.text();
-
-      try {
-        const json = JSON.parse(text);
-
-        return {
-          success: json.success ?? true,
-          message:
-            json.message ||
-            'Berjaya dihantar',
-        };
-      } catch {
-        // Many Apps Script POSTs return text HTML
-        // or JSON string
-        return {
-          success: true,
-        };
-      }
-    }
-  } catch (err) {
-    console.error(
-      'Direct lead submission error:',
-      err
-    );
-  }
-
-  throw new Error(
-    'Gagal menghantar permohonan ke pelayan.'
-  );
+  } catch { /* No fallback: first request may already have saved a lead. */ }
+  return { success: false, outcome: 'uncertain', message: UNCERTAIN_LEAD_MESSAGE };
 }

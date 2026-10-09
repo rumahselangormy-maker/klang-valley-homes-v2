@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, CheckCircle2, AlertCircle, Loader2, ShieldCheck, User, Phone, Mail, MapPin, Building, DollarSign, Briefcase, FileText } from 'lucide-react';
 import { LeadFormData } from '../types';
 import { submitLead } from '../services/api';
+import { createLeadSubmissionGuard } from '../services/leadSubmission';
 
 interface EligibilityModalProps {
   isOpen: boolean;
@@ -39,19 +40,22 @@ export const EligibilityModal: React.FC<EligibilityModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [submissionLocked, setSubmissionLocked] = useState(false);
+  const [whatsappUrl, setWhatsappUrl] = useState('');
+  const submissionGuard = useRef(createLeadSubmissionGuard());
 
   useEffect(() => {
-    if (initialProjectName && typeof initialProjectName === 'string') {
+    if (!isSubmitting && !submissionLocked && initialProjectName && typeof initialProjectName === 'string') {
       setFormData((prev) => ({ ...prev, interestedProject: initialProjectName }));
     }
-  }, [initialProjectName]);
+  }, [initialProjectName, isSubmitting, submissionLocked]);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !submissionLocked) {
       setIsSuccess(false);
       setErrorMessage(null);
     }
-  }, [isOpen]);
+  }, [isOpen, submissionLocked]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -70,6 +74,7 @@ export const EligibilityModal: React.FC<EligibilityModalProps> = ({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
+    if (isSubmitting || submissionLocked) return;
     const { name, value, type } = e.target;
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
@@ -77,7 +82,7 @@ export const EligibilityModal: React.FC<EligibilityModalProps> = ({
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
-    setErrorMessage(null);
+    if (!submissionLocked) setErrorMessage(null);
   };
 
   const validateForm = (): boolean => {
@@ -106,41 +111,25 @@ export const EligibilityModal: React.FC<EligibilityModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSubmitting) return;
+    if (isSubmitting || submissionLocked) return;
 
     if (!validateForm()) return;
 
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    try {
-      await submitLead(formData);
+    const completed = await submissionGuard.current.run(formData, submitLead);
+    if (!completed) return;
+    setIsSubmitting(false);
+    if (completed.result.outcome === 'confirmed') {
+      setSubmissionLocked(true);
+      setWhatsappUrl(completed.whatsappUrl!);
       setIsSuccess(true);
-      // Reset form fields
-      setFormData({
-        leadType: 'PROJEK BARU',
-        name: '',
-        phone: '',
-        email: '',
-        preferredArea: '',
-        interestedProject: '',
-        grossIncome: '',
-        netIncome: '',
-        employmentStatus: 'SWASTA',
-        loanCommitments: '',
-        firstHomeBuyer: 'YA',
-        propertyType: 'TERRACE',
-        estimatedBudget: 'RM 300,000 - RM 500,000',
-        remarks: '',
-        consent: true,
-      });
-    } catch (err: any) {
-      console.error(err);
-      setErrorMessage(
-        'Maaf, permohonan tidak dapat dihantar sekarang. Sila cuba lagi atau hubungi kami.'
-      );
-    } finally {
-      setIsSubmitting(false);
+      // Preserve submitted context when returning from WhatsApp.
+      try { window.location.assign(completed.whatsappUrl!); } catch { /* Explicit link remains available. */ }
+    } else {
+      setErrorMessage(completed.result.message);
+      if (completed.result.outcome === 'uncertain') setSubmissionLocked(true);
     }
   };
 
@@ -194,10 +183,13 @@ export const EligibilityModal: React.FC<EligibilityModalProps> = ({
                   Permohonan Berjaya Dihantar!
                 </h3>
                 <p className="text-sm text-slate-300 leading-relaxed">
-                  Terima kasih. Permohonan anda telah berjaya dihantar. Team kami akan hubungi anda untuk langkah seterusnya.
+                  Terima kasih. Permohonan anda telah berjaya dihantar. Buka WhatsApp untuk meneruskan pertanyaan. Anda perlu tekan Send sendiri.
                 </p>
               </div>
 
+              <a href={whatsappUrl} className="inline-block px-6 py-3 rounded-xl bg-emerald-600 text-white font-bold">
+                Open WhatsApp
+              </a>
               <button
                 type="button"
                 onClick={onClose}
@@ -485,7 +477,7 @@ export const EligibilityModal: React.FC<EligibilityModalProps> = ({
               <div className="pt-3">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || submissionLocked}
                   className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 disabled:opacity-50 text-slate-950 font-bold text-base shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
