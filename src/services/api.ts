@@ -1,5 +1,6 @@
 import { Project, LeadFormData } from '../types';
 import { filterPublicListings } from './publicListingVisibility';
+import { normalizeArea } from './propertyPresentation';
 
 export interface SubsaleListing {
   PUBLIC_VISIBILITY?: unknown;
@@ -36,7 +37,7 @@ export function normalizeProject(raw: Record<string, any>): Project {
   return {
     PUBLIC_VISIBILITY: raw.PUBLIC_VISIBILITY,
     ID: String(raw.ID || raw.id || ''),
-    AREA: String(raw.AREA || raw.area || raw['Area'] || ''),
+    AREA: normalizeArea(String(raw.AREA || raw.area || raw['Area'] || '')),
     PROJECT_NAME: String(
       raw.PROJECT_NAME ||
         raw.project_name ||

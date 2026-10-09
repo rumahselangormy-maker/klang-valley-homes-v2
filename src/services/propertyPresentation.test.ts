@@ -40,6 +40,7 @@ for (const [id, name] of verifiedAreas) {
     assert.equal(normalizeArea(id), name);
     assert.equal(normalizeArea('  ' + id.toLowerCase() + '  '), name);
     assert.equal(normalizeArea(name.toUpperCase()), name);
+    assert.equal(normalizeArea('  ' + name.replace(/ /g, '   ') + '  '), name);
     assert.equal(matchesArea(id, name), true);
     assert.equal(matchesArea(name, id), true);
     assert.equal(matchesArea(name.toUpperCase(), name), true);
@@ -66,7 +67,8 @@ test('keeps unknown and free-text areas usable without admitting unrelated match
 });
 
 test('counts supplied public inventory consistently with area filtering', () => {
-  const areas = ['SAH', 'PAL', 'SAH'];
-  assert.equal(areas.filter(area => matchesArea(area, 'Shah Alam')).length, 2);
+  const areas = ['SAH', 'PAL', 'Shah Alam', ' sah ', 'SHAH ALAM'];
+  assert.deepEqual(getAreaOptions(areas), ['Puncak Alam', 'Shah Alam']);
+  assert.equal(areas.filter(area => matchesArea(area, 'Shah Alam')).length, 4);
   assert.equal(areas.filter(area => matchesArea(area, 'Puncak Alam')).length, 1);
 });
