@@ -55,4 +55,4 @@ export interface LeadFormData {
   source?: string;
 }
 
-export type ActiveTab = 'home' | 'properties' | 'projects' | 'eligibility' | 'about' | 'contact' | 'calculator';
+export type ActiveTab = 'home' | 'properties' | 'projects' | 'eligibility' | 'contact' | 'calculator';

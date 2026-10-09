@@ -29,7 +29,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'properties', label: 'Properties' },
     { id: 'projects', label: 'Projects' },
     { id: 'calculator', label: 'Kalkulator Kelayakan' },
-    { id: 'about', label: 'About Us' },
     { id: 'contact', label: 'Contact' },
   ];
 
@@ -42,7 +41,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   properties: '/properties',
   projects: '/projects',
   calculator: '/kalkulator-loan',
-  about: '/about',
   contact: '/contact',
   eligibility: '/semak-kelayakan',
 };

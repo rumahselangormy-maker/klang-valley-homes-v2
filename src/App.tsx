@@ -19,7 +19,6 @@ import { SubsaleSection } from './components/SubsaleSection';
 import { WhyChooseUs } from './components/WhyChooseUs';
 import { ProcessSteps } from './components/ProcessSteps';
 import { CalculatorSection } from './components/CalculatorSection';
-import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 
@@ -38,7 +37,6 @@ export default function App() {
     if (path === '/properties') return 'properties';
     if (path === '/projects') return 'projects';
     if (path === '/kalkulator-loan') return 'calculator';
-    if (path === '/about') return 'about';
     if (path === '/contact') return 'contact';
     if (path === '/semak-kelayakan') return 'eligibility';
 
@@ -839,25 +837,6 @@ export default function App() {
             />
 
             <ProcessSteps
-              onOpenEligibility={
-                handleOpenEligibility
-              }
-            />
-
-          </div>
-        )}
-
-        {/* ================= ABOUT ================= */}
-        {activeTab === 'about' && (
-          <div className="pt-24">
-
-            <AboutSection
-              onOpenEligibility={
-                handleOpenEligibility
-              }
-            />
-
-            <WhyChooseUs
               onOpenEligibility={
                 handleOpenEligibility
               }
